@@ -1,0 +1,12 @@
+---
+layout: archive
+title: "Administrative Roles"
+permalink: /roles/
+author_profile: true
+---
+
+{% include base_path %}
+
+{% for post in site.roles reversed %}
+  {% include archive-single.html %}
+{% endfor %}
