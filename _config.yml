@@ -13,7 +13,7 @@ title                    : "E-Portfolio"
 title_separator          : "-"
 name                     : &name "Tanti Kristanti"
 description              : &description "Tanti Kristanti's academic portfolio"   # Update this with a general description of your site, this is the default if not overridden by a page
-url                      : https://tantikristanti.github.io # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io", 
+#url                      : https://tantikristanti.github.io # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io", 
                                                            # or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "academicpages/academicpages.github.io"
@@ -48,7 +48,7 @@ author:
   bitbucket        : # Username - Update with your username on the site
   codepen          : # Username
   dribbble         : # Username
-  github           : "tantikristanti"
+  github           : "https://github.com/tantikristanti/"
   kaggle           : # Username  
   stackoverflow    : # User number or user number and name (i.e., use "1" or "1/jeff-atwood")    
 
@@ -63,7 +63,7 @@ author:
   keybase          : # Username
   instagram        : # Username
   lastfm           : # Username
-  linkedin         : "tanti-kristanti-474520118"
+  linkedin         : "https://www.linkedin.com/in/tanti-kristanti-474520118/"
   mastodon         : # URL
   medium           : # URL
   pinterest        : # Username
