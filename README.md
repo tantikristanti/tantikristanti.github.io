@@ -1,5 +1,14 @@
-# tantikristanti.github.io
+# Tanti Kristanti 
 
 Professional Resume
 
-© 2025 Tanti Kristanti, Powered by [Jekyll & AcademicPages](https://github.com/academicpages/academicpages.github.io/tree/master/)
+
+## Run
+
+ ```bash
+ % bundle exec jekyll serve -l -H localhost
+ ```
+
+
+
+© 2025 Tanti Kristanti, Powered by [Jekyll &amp; AcademicPages](https://github.com/academicpages/academicpages.github.io/tree/master/)
