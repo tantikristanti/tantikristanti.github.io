@@ -29,8 +29,8 @@ main:
   - title: "Roles"
     url: /roles/
 
-  #- title: "Portfolio"
-  #  url: /portfolio/
+  - title: "Projects"
+    url: /portfolio/
 
   #- title: "Blog Posts"
   #  url: /year-archive/

@@ -137,14 +137,16 @@ def extract_author_info(config):
             profiles.append({
                 "network": "GitHub",
                 "username": author.get('github'),
-                "url": f"https://github.com/{author.get('github')}"
+                #"url": f"https://github.com/{author.get('github')}"
+                "url": author.get('github')
             })
         
         if author.get('linkedin'):
             profiles.append({
                 "network": "LinkedIn",
                 "username": author.get('linkedin'),
-                "url": f"https://www.linkedin.com/in/{author.get('linkedin')}"
+                #"url": f"https://www.linkedin.com/in/{author.get('linkedin')}"
+                "url": author.get('linkedin')
             })
         
         if author.get('twitter'):
@@ -335,6 +337,68 @@ def parse_teaching(teaching_dir):
     
     return teaching
 
+def parse_certifications(certifications_dir):
+    """Parse certifications from the _certifications directory."""
+    certifications = []
+    
+    if not os.path.exists(certifications_dir):
+        return certifications
+    
+    for certifications_file in sorted(glob.glob(os.path.join(certifications_dir, "*.md"))):
+        with open(certifications_file, 'r', encoding='utf-8') as file:
+            content = file.read()
+        
+        # Extract front matter
+        front_matter_match = re.match(r'^---\s*(.*?)\s*---', content, re.DOTALL)
+        if front_matter_match:
+            front_matter = yaml.safe_load(front_matter_match.group(1))
+            
+            # Extract certification details
+            certifications_entry = {
+                "role": front_matter.get('title', ''),
+                "institution": front_matter.get('venue', ''),
+                "date": front_matter.get('date', ''),
+                "date1": front_matter.get('date1', ''),
+                "date2": front_matter.get('date2', ''),
+                "type": front_matter.get('type', ''),
+                "description": front_matter.get('excerpt', '')
+            }
+            
+            certifications.append(certifications_entry)
+    
+    return certifications
+
+def parse_training(training_dir):
+    """Parse training from the _trainings directory."""
+    trainings = []
+    
+    if not os.path.exists(training_dir):
+        return trainings
+    
+    for training_file in sorted(glob.glob(os.path.join(training_dir, "*.md"))):
+        with open(training_file, 'r', encoding='utf-8') as file:
+            content = file.read()
+        
+        # Extract front matter
+        front_matter_match = re.match(r'^---\s*(.*?)\s*---', content, re.DOTALL)
+        if front_matter_match:
+            front_matter = yaml.safe_load(front_matter_match.group(1))
+            
+            # Extract training details
+            training_entry = {
+                "role": front_matter.get('title', ''),
+                "institution": front_matter.get('venue', ''),
+                "date": front_matter.get('date', ''),
+                "date1": front_matter.get('date1', ''),
+                "date2": front_matter.get('date2', ''),
+                "type": front_matter.get('type', ''),
+                "description": front_matter.get('excerpt', '')
+            }
+            
+            trainings.append(training_entry)
+    
+    return trainings
+
 def parse_roles(roles_dir):
     """Parse roles from the _roles directory."""
     roles = []
@@ -353,10 +417,12 @@ def parse_roles(roles_dir):
             
             # Extract roles details
             roles_entry = {
-                "course": front_matter.get('title', ''),
+                "role": front_matter.get('title', ''),
                 "institution": front_matter.get('venue', ''),
                 "date": front_matter.get('date', ''),
-                "role": front_matter.get('type', ''),
+                "date1": front_matter.get('date1', ''),
+                "date2": front_matter.get('date2', ''),
+                "type": front_matter.get('type', ''),
                 "description": front_matter.get('excerpt', '')
             }
             
@@ -423,6 +489,12 @@ def create_cv_json(md_file, config_file, repo_root, output_file):
     
     # Add teaching
     cv_json["teaching"] = parse_teaching(os.path.join(repo_root, "_teaching"))
+    
+    # Add certifications
+    cv_json["certifications"] = parse_certifications(os.path.join(repo_root, "_certifications"))
+    
+    # Add training
+    cv_json["training"] = parse_training(os.path.join(repo_root, "_training"))
     
     # Add roles
     cv_json["roles"] = parse_roles(os.path.join(repo_root, "_roles"))

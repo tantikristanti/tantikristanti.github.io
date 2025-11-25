@@ -8,10 +8,14 @@ redirect_from:
 ---
 {% include base_path %}
 
+<div class="cv-download-links">
+  <!--a href="{{ base_path }}/files/CV_Tanti_Kristanti_English.pdf" class="btn btn--primary">Download CV</a-->
+  <a href="{{ base_path }}" class="btn btn--inverse">Home</a>
+</div>
+
+
 Education
 =========
-
-[Degree - University - Country - Year of Degree]
 
 * **Master in Language and Computer Science**, [Sorbonne Université](https://www.sorbonne-universite.fr/), France, 2018
   * Field of study: Arts, Humanities, Languages [*Arts, Lettres, Langues*]
@@ -22,6 +26,14 @@ Education
   * Field of study: Engineering 
   * Major: Informatics
   * Specialization: Information Systems
+
+
+Languages
+===============
+* Indonesian: native language
+* French: fluent
+* English: fluent
+
 
 Work Experience
 ===============
