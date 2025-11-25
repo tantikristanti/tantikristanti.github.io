@@ -9,12 +9,6 @@ author_profile: true
   <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
 {% endif %}
 
-{% include base_path %}
-
-<div class="cv-download-links">
-  <a href="{{ base_path }}" class="btn btn--inverse">Home</a>
-</div>
-
 <!-- New style rendering if publication categories are defined -->
 {% if site.publication_category %}
   {% for category in site.publication_category  %}

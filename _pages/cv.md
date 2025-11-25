@@ -6,13 +6,6 @@ author_profile: true
 redirect_from:
   - /resume
 ---
-{% include base_path %}
-
-<div class="cv-download-links">
-  <!--a href="{{ base_path }}/files/CV_Tanti_Kristanti_English.pdf" class="btn btn--primary">Download CV</a-->
-  <a href="{{ base_path }}" class="btn btn--inverse">Home</a>
-</div>
-
 
 Education
 =========

@@ -5,12 +5,6 @@ permalink: /certifications/
 author_profile: true
 ---
 
-{% include base_path %}
-
-<div class="cv-download-links">
-  <a href="{{ base_path }}" class="btn btn--inverse">Home</a>
-</div>
-
 {% for post in site.certifications reversed %}
   {% include archive-single.html %}
 {% endfor %}
