@@ -6,27 +6,32 @@ author_profile: true
 redirect_from:
   - /resume
 ---
-
 Education
 =========
 
 * **Master in Language and Computer Science**, [Sorbonne Université](https://www.sorbonne-universite.fr/), France, 2018
+
   * Field of study: Arts, Humanities, Languages [*Arts, Lettres, Langues*]
   * Major: Literature, Philology, Linguistics [*Littérature, Philologie, Linguistique*]
   * Specialization: Language and Computer Science [*Langue et Informatique*]
-  
+  * Master 1 Thesis:
+    Semantic annotation and ontology population based on the autism corpus [*Annotation sémantique et peuplement d’ontologie à partir du corpus sur l'autisme*]
+  * Master 2 Thesis:
+    Enhancement of a Named Entity Recognition and Disambiguation (NERD) system [*Enrichissement d’un système de reconnaissance et de désambiguïsation d’entités nommées*]
 * **Master in Informatics**, [Bandung Institute of Technology (ITB)](https://itb.ac.id/en/), Indonesia, 2008
-  * Field of study: Engineering 
+
+  * Field of study: Engineering
   * Major: Informatics
   * Specialization: Information Systems
-
+  * Master Thesis:
+    Enterprise Integration for Academic and Financial Functions
 
 Languages
-===============
-* Indonesian: native language
+=========
+
+* Indonesian: native
 * French: fluent
 * English: fluent
-
 
 Work Experience
 ===============
@@ -35,7 +40,6 @@ Work Experience
 
   * National Institute for Research in Digital Science and Technology ([INRIA](https://www.inria.fr/en)), Paris, France
   * [ALMAnaCH](https://almanach.inria.fr/index-en.html) Project Team
-  
 * **[2008 – 2015]**: Full-Time Lecturer
 
   * Faculty of Information Technology,
@@ -44,32 +48,42 @@ Work Experience
 
 Technical Skills
 ================
+
 * Programming languages:
   * Python, Java, C, C#
 * ML/DL frameworks:
   * PyTorch, TensorFlow, Keras, Hugging Face
 * Databases:
-  * PostgreSQL, MySQL
-* Vector Databases:
+  * PostgreSQL, SQL, MySQL
+* Vector databases:
   * ChromaDB, Faiss
+* Graph Database Management System (GDMS):
+  * Neo4j + Cypher (declarative language)
+* Semantic Web tools:
+  * RDF (Resource Description Framework), SparQL
 * Embedding models:
   * Sentence-transformer, embeddinggemma, qwen-embedding
 * LLMs:
   * BERT, GPT, Llama, Mistral, Deepseek, Qwen, Gemma
-* RAG and Agentic AI Platforms:
+* RAG and Agentic AI platforms:
   * LangChain, LangGraph, LlamaIndex, smolagents
 * APIs:
   * RESTful API, FastAPI
-* Web Interfaces:
-  * Gradio, Streamlit
+* API testing tool:
+  * Postman, Insomnia
+* Web Interfaces and Applications:
+  * Gradio, Streamlit, Java Spring Boot
+* Version control systems (VCS), CI/CD:
+  * Git, GitHub, GitLab
 * Deployment:
   * Docker
-* SAP R/3 (user level) modules: 
+* Cloud platforms (basic knowledge):
+  * GCP, Azure
+* SAP R/3 modules (user level):
   * SAP system administrators (ADM100)
   * Project management functions in SAP (PLM200)
   * ABAP programming language of SAP (BC400)
   * Business concepts and methods in Management Accounting (AC040)
-
 
 Professional Certification
 ==========================
@@ -79,7 +93,8 @@ Professional Certification
   {% endfor %}</ul>
 
 Academic Honor
-==========================
+==============
+
 * Best Faculty Member (Lecturer), 07/08/2009:
   * Evaluation of Academic Performance for the Even Semester 2008/2009
   * Faculty of Information Technology,
@@ -88,11 +103,14 @@ Academic Honor
 
 Research
 ========
+
 1. Development of Lecturer Portal Leveraging Text Classification Algorithm [*Pengembangan Portal Dosen Memanfaatkan Algoritma Klasifikasi Teks*]
+
 * Years: 2014-2015
 * Funded by: Maranatha Christian University
 
 2. Classification and Clustering Analysis Model for Student and Lecturer Data in Higher Education [*Model Analisis Classification dan Clustering untuk Data Mahasiswa dan Dosen di Perguruan Tinggi*]
+
 * Years: 2013-2014
 * Funded by: Competitive grant from the Directorate General of Higher Education, Research and Technology (DIKTI), Ministry of Education and Culture, Indonesia.
 
@@ -111,7 +129,7 @@ Teaching
   {% endfor %}</ul>
 
 Administrative Roles
-========
+====================
 
 <ul>{% for post in site.roles reversed %}
     {% include archive-single-cv.html %}
