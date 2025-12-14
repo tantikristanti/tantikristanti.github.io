@@ -56,11 +56,11 @@ Technical Skills
 * Databases:
   * PostgreSQL, SQL, MySQL
 * Vector databases:
-  * ChromaDB, Faiss
+  * ChromaDB, Faiss, pgvector
 * Graph Database Management System (GDMS):
   * Neo4j + Cypher (declarative language)
 * Semantic Web tools:
-  * RDF (Resource Description Framework), SparQL
+  * RDF (Resource Description Framework), SPARQL
 * Embedding models:
   * Sentence-transformer, embeddinggemma, qwen-embedding
 * LLMs:
@@ -69,9 +69,9 @@ Technical Skills
   * LangChain, LangGraph, LlamaIndex, smolagents
 * APIs:
   * RESTful API, FastAPI
-* API testing tool:
+* API testing tools:
   * Postman, Insomnia
-* Web Interfaces and Applications:
+* Web interfaces and applications:
   * Gradio, Streamlit, Java Spring Boot
 * Version control systems (VCS), CI/CD:
   * Git, GitHub, GitLab
