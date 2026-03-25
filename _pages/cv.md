@@ -9,7 +9,7 @@ redirect_from:
 Education
 =========
 
-* **Master in Language and Computer Science**, [Sorbonne Université](https://www.sorbonne-universite.fr/), France, 2018
+* **Master in Language and Computer Science**, [Sorbonne Université](https://www.sorbonne-universite.fr/), France
 
   * Field of study: Arts, Humanities, Languages [*Arts, Lettres, Langues*]
   * Major: Literature, Philology, Linguistics [*Littérature, Philologie, Linguistique*]
@@ -18,7 +18,7 @@ Education
     Semantic annotation and ontology population based on the autism corpus [*Annotation sémantique et peuplement d’ontologie à partir du corpus sur l'autisme*]
   * Master 2 Thesis:
     Enhancement of a Named Entity Recognition and Disambiguation (NERD) system [*Enrichissement d’un système de reconnaissance et de désambiguïsation d’entités nommées*]
-* **Master in Informatics**, [Bandung Institute of Technology (ITB)](https://itb.ac.id/en/), Indonesia, 2008
+* **Master in Informatics**, [Bandung Institute of Technology (ITB)](https://itb.ac.id/en/), Indonesia
 
   * Field of study: Engineering
   * Major: Informatics
@@ -29,9 +29,9 @@ Education
 Languages
 =========
 
-* Indonesian: native
 * French: fluent
 * English: fluent
+* Indonesian: native
 
 Work Experience
 ===============
@@ -64,7 +64,7 @@ Technical Skills
 * Embedding models:
   * Sentence-transformer, embeddinggemma, qwen-embedding
 * LLMs:
-  * BERT, GPT, Llama, Mistral, Deepseek, Qwen, Gemma
+  * Llama, Mistral, Deepseek, Qwen, GPT, BERT 
 * RAG and Agentic AI platforms:
   * LangChain, LangGraph, LlamaIndex, smolagents
 * APIs:
@@ -76,9 +76,9 @@ Technical Skills
 * Version control systems (VCS), CI/CD:
   * Git, GitHub, GitLab
 * Deployment:
-  * Docker
-* Cloud platforms (basic knowledge):
-  * GCP, Azure
+  * Docker, Kubernetes (K8s)
+* Cloud platforms:
+  * AWS, Azure, GCP
 * SAP R/3 modules (user level):
   * SAP system administrators (ADM100)
   * Project management functions in SAP (PLM200)
