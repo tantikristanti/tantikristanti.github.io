@@ -33,7 +33,7 @@ main:
     url: /portfolio/
 
   - title: "Blogs"
-   url: /posts/
+    url: /posts/
     
   # - title: "CV"
   #   url: /cv-json/
