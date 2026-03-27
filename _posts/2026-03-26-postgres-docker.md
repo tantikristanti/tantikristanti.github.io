@@ -316,5 +316,5 @@ volumes:
 
 ## References
 
-[Docker documentation](https://docs.docker.com/)
-[pgAdmin](https://www.pgadmin.org/)
+1. [Docker documentation](https://docs.docker.com/)
+2. [pgAdmin](https://www.pgadmin.org/)

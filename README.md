@@ -2,7 +2,7 @@
 
 Professional Resume
 
-![alt text](images/cv-tanti.png "CV Tanti Kristanti")
+![alt text](/images/cv-tanti.png "CV Tanti Kristanti")
 
 ## Run
 
