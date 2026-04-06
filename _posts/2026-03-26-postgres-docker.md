@@ -8,12 +8,13 @@ tags:
   - docker
   - postgres
 ---
-Docker has become a widely adopted tool for developers due to its capacity to standardize development environments, streamline resource management, accelerate deployment workflows, and ensure application isolation through containerization. By packaging applications into standardized, self-sufficient units called containers, Docker ensures all necessary components, such as code, libraries, tools, and runtime environments, are included, enabling seamless execution across diverse environments. 
+Docker has become a widely adopted tool for developers due to its capacity to standardize development environments, streamline resource management, accelerate deployment workflows, and ensure application isolation through containerization. By packaging applications into standardized, self-sufficient units called containers, Docker ensures all necessary components, such as code, libraries, tools, and runtime environments, are included, enabling seamless execution across diverse environments.
 
-PostgreSQL is an open-source object-relational database system that builds upon SQL functionality while offering advanced features to securely manage and scale complex data operations. It has become a go-to choice for many applications, but managing multiple versions for various reasons, including implementations across different platforms and environments, can be cumbersome. 
+PostgreSQL is an open-source object-relational database system that builds upon SQL functionality while offering advanced features to securely manage and scale complex data operations. It has become a go-to choice for many applications, but managing multiple versions for various reasons, including implementations across different platforms and environments, can be cumbersome.
 
-Running Postgres with Docker offers several advantages. It allows us to deploy the database reliably across various operating systems and environments, ensuring seamless integration with our applications. Moreover, by containerizing Postgres, we can avoid the complexity of managing multiple versions for different stages of development. This approach enables us to maintain application stability without disrupting other environments, thereby reducing downtime and improving overall system reliability. This guide walks through the process of setting up and running PostgreSQL with Docker. 
+Running Postgres with Docker offers several advantages. It allows us to deploy the database reliably across various operating systems and environments, ensuring seamless integration with our applications. Moreover, by containerizing Postgres, we can avoid the complexity of managing multiple versions for different stages of development. This approach enables us to maintain application stability without disrupting other environments, thereby reducing downtime and improving overall system reliability. This guide walks through the process of setting up and running PostgreSQL with Docker.
 
+---
 ## Install and Run Docker Desktop
 
 Installing Docker is a straightforward process. The official [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/) documentation provides step-by-step instructions for installing it on various operating systems, including macOS, Windows, and Linux.
@@ -263,17 +264,32 @@ Then, configure the container with the volume by mapping the source to the targe
 docker run --name postgres-docker-4 --env-file=.env -p 5436:5432 -v postgres-data:/var/lib/postgresql -d postgres
 ```
 
-### Test the Persistent Volume
+### Test the Volume
 
 We'll test the volume by first creating a new database and table.
+
+- Connect to Postgres.
 
 ```bash
 docker exec -it postgres-docker-4 psql -U postgres
 ```
 
+- Create a database and view the database list.
+
 ```sql
 CREATE DATABASE enterprise_b;
 SELECT datname FROM pg_database;
+```
+
+- Then, switch to the newly created database.
+
+```bash
+\c enterprise_b
+```
+
+- Create a table.
+
+```sql
 CREATE TABLE employees (
   id INT PRIMARY KEY,
   name VARCHAR,
@@ -281,16 +297,15 @@ CREATE TABLE employees (
 );
 ```
 
-List the table using `\dt` and quit using `\q`.
-
-Then, we stop and delete the container.
+- List the table using `\dt` and quit from the Postgres container using `\q`.
+- Next, we will stop and delete the container.
 
 ```bash
 docker stop postgres-docker-4
 docker rm postgres-docker-4
 ```
 
-Last, we recreate the container with the same configuration as the deleted one and check if the data persists.
+- Finally, we recreate the container with the same configuration as the deleted one and check if the data persists.
 
 ```bash
 docker run --name postgres-docker-4 --env-file=.env -p 5436:5432 -v postgres-data:/var/lib/postgresql -d postgres
