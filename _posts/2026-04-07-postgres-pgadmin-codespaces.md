@@ -50,7 +50,7 @@ Before configuring our database, we need to set up GitHub Codespaces, which prov
 
 Here’s how to get started:
 
-#### 1.1 Create a New Repository
+**1.1 Create a New Repository**
 
 First, create a new repository to host our Codespace configuration:
 
@@ -65,7 +65,7 @@ First, create a new repository to host our Codespace configuration:
    * **.gitignore template:** Select **"Python"**.
 3. Click **"Create repository"**.
 
-#### 1.2 Launch Our Codespace
+**1.2 Launch Our Codespace**
 
 With our repository created, launching the cloud environment takes one click:
 
@@ -81,7 +81,7 @@ GitHub will build our cloud-based container (running on a Linux virtual machine)
 
 ### Step 2: Switch to VS Code Desktop (Optional)
 
-While the browser experience is excellent, you might prefer working in your local **Visual Studio Code** application. The integration is seamless. TTo have all future Codespaces open automatically in your desktop VS Code:
+While the browser experience is excellent, you might prefer working in your local **Visual Studio Code** application. The integration is seamless. To have all future Codespaces open automatically in your desktop VS Code:
 
 1. Go to your GitHub [**Personal Settings**](https://github.com/settings/profile).
 2. In the left sidebar, click **"Codespaces"**.
@@ -204,7 +204,7 @@ The parameters for configuring pgAdmin are as follows:
 
 ## Check the Running Containers
 
-Verify that both containers—Postgres and pgAdmin—are running with the `docker ps` command. Open a new terminal to check:
+Verify that both containers, Postgres and pgAdmin, are running with the `docker ps` command. Open a new terminal to check:
 
 ```bash
 docker ps
@@ -214,7 +214,7 @@ docker ps
 
 ## Login to pgAdmin
 
-Once both containers (Postgres and pgAdmin) are running, open pgAdmin at http://localhost:8085. Log in with the credentials specified when configuring the container:
+Once both containers (Postgres and pgAdmin) are running, open pgAdmin at `http://localhost:8085`. Log in with the credentials specified when configuring the container:
 
 - **Email:** admin@admin.com
 - **Password:** root
