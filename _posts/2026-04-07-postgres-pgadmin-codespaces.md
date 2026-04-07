@@ -81,13 +81,17 @@ GitHub will build our cloud-based container (running on a Linux virtual machine)
 
 ### Step 2: Switch to VS Code Desktop (Optional)
 
-While the browser experience is excellent, you might prefer working in your local **Visual Studio Code** application. The integration is seamless. To have all future Codespaces open automatically in your desktop VS Code:
+While the browser experience is excellent, you might prefer working in your local **Visual Studio Code** application. The integration is seamless as we simply select `Open in VS Code Desktop` in the options to open a remote window after clicking the Codespaces button on the bottom left side.
+
+![alt text](/images/posts/postgres-pgadmin-codespaces/4-vscode-codespace.png "Open Codespace in VS Code Desktop")
+
+To have all future Codespaces open automatically in your desktop VS Code:
 
 1. Go to your GitHub [**Personal Settings**](https://github.com/settings/profile).
 2. In the left sidebar, click **"Codespaces"**.
 3. Under **"Editor preference"**, select **"Visual Studio Code"**.
 
-![alt text](/images/posts/postgres-pgadmin-codespaces/4-codespace-viscode.png "Open Codespace with VS Code")
+![alt text](/images/posts/postgres-pgadmin-codespaces/5-codespace-editor.png "Codespace Editor Preference")
 
 ---
 
@@ -98,7 +102,7 @@ You can reopen any of your active or stopped codespaces on GitHub or Visual Stud
 * **To see all your codespaces:** Visit [**github.com/codespaces**](https://github.com/codespaces).
 * **To quickly resume the last-used codespace for a repo:** On any repository page, press the **comma key ","**. A "Resume codespace" prompt will appear.
 
-![alt text](/images/posts/postgres-pgadmin-codespaces/5-resume-codespace.png "Resume Codespace")
+![alt text](/images/posts/postgres-pgadmin-codespaces/6-resume-codespace.png "Resume Codespace")
 
 * **To reconnect from VS Code Desktop:** Open the **Remote Explorer** sidebar (`Ctrl+Shift+P` / `Cmd+Shift+P` and search for it if not visible), find your codespace under "GitHub Codespaces", right-click it, and select **"Connect to Codespace"**.
 
@@ -210,7 +214,7 @@ Verify that both containers, Postgres and pgAdmin, are running with the `docker 
 docker ps
 ```
 
-![alt text](/images/posts/postgres-pgadmin-codespaces/6-running-containers.png "Running Containers")
+![alt text](/images/posts/postgres-pgadmin-codespaces/7-running-containers.png "Running Containers")
 
 ## Login to pgAdmin
 
@@ -232,11 +236,11 @@ Create a new server by right-clicking **Server → Register → Server**. Fill i
   - Password: `root`
 - Click **Save**
 
-![alt text](/images/posts/postgres-pgadmin-codespaces/7-pgadmin-settings.png "pgAdmin")
+![alt text](/images/posts/postgres-pgadmin-codespaces/8-pgadmin-settings.png "pgAdmin")
 
 Once the server is connected, verify that the `db_test` database defined in the `.env` file has been created.
 
-![alt text](/images/posts/postgres-pgadmin-codespaces/8-db-test.png "db-test")
+![alt text](/images/posts/postgres-pgadmin-codespaces/9-db-test.png "db-test")
 
 ## Orchestrating Services with Docker Compose
 
