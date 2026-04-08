@@ -25,7 +25,7 @@ After installation, verify that Docker is working properly by running the versio
 docker version
 docker info
 ```
-
+---
 ## Pull Docker Images from Docker Hub
 
 There are different methods to pull Docker images: using the Docker Desktop, CLI, and API.
@@ -78,6 +78,7 @@ print(f"ID: {image.id}, Tags: {image.tags}")
 docker images
 ```
 
+---
 ## Run Docker Containers
 
 To launch and manage images within isolated containers, we use the `docker run` command by specifying various arguments.
@@ -158,7 +159,7 @@ To remove the running containers, use the `docker rm` command.
 docker rm posgtres-docker-1
 docker rm posgtres-docker-2
 ```
-
+---
 ## Create .env File
 
 Up to this point, we have successfully run the Postgres service. However, when creating a container, we have to enter environment variables one by one on the command line, which is impractical if we have many environment variables to set. Therefore, we create a separate file specifically for these environment variables, named `.env`.
@@ -186,7 +187,7 @@ Once the file is created, we can configure the container using this `.env` file 
 ```bash
 docker run --name posgtres-docker-3 --env-file=.env -p 5435:5432  -d postgres
 ```
-
+---
 ## Create Docker Compose Yaml File
 
 Running containers manually in the terminal can be cumbersome, especially as the number of containers to be handled increases. To address this issue, we can create a `docker-compose.yml` file containing the configuration for running containers. This way, whenever we need to start a container, we simply run `compose up`, and conversely, when we need to stop it, we run `compose down` using the YAML file.
@@ -220,7 +221,7 @@ Run `compose down` to stop the service.
 ```bash
 docker compose down
 ```
-
+---
 ## Connect to the Postgres Server
 
 There are several ways to connect to a running Postgres server, including using the terminal, pgAdmin, and connecting it as part of our programming code. In this guide, we'll connect to the server using the terminal and pgAdmin.
@@ -239,13 +240,13 @@ To use pgAdmin, we first need to install the tool according to our operating sys
 Then, we create a new server connection and configure it with the container name, username, and password specified during the container configuration.
 
 ![alt text](/images/posts/postgres-docker/3-create-server-connection.png "Postgres Server")
-
+---
 ## Create Database and Tables
 
 We will test our Postgres server by creating a database and table in the container terminal and check whether the results are synchronized in pgAdmin.
 
 ![alt text](/images/posts/postgres-docker/4-create-database-table.png "Database and Table")
-
+---
 ## Create Persistent Volume
 
 When a container is destroyed, the data will also be lost. To prevent this, we can store the data in a persistent volume by specifying the data location in the source or host machine `postgres-data` and the target or container `/var/lib/postgresql/data`. Therefore, the data will be mounted from the source to the target when a new container that specifies the volume is started. Volumes are persistent data stores for a container.
@@ -332,6 +333,20 @@ services:
 volumes:
   postgres-data:
 ```
+
+---
+## Conclusion
+
+We’ve journeyed through the process of containerizing PostgreSQL with Docker, transforming a traditionally complex database setup into a portable, reproducible, and scalable foundation.
+
+**What we accomplished:**
+
+✅ **Established a containerized PostgreSQL environment** that runs consistently across any operating system with Docker installed.
+✅ **Mastered container lifecycle management**, from pulling images and running containers to stopping and removing them efficiently.
+✅ **Implemented best practices** like environment variable management via `.env` files and infrastructure-as-code with Docker Compose.
+✅ **Ensured data persistence** by configuring Docker volumes that survive container destruction and recreation.
+✅ **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces. 
+---
 
 ## References
 
