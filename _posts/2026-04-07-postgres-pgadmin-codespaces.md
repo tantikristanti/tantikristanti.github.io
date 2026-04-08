@@ -42,8 +42,6 @@ Getting started is straightforward:
 
 For personal use, GitHub Codespaces includes a monthly free tier with every GitHub account. We can experiment, build, and learn (like following this very guide!) without any initial cost or payment details. It’s the ultimate risk-free way to try new tools and streamline our workflow.
 
----
-
 ### Step 1: Launch the Cloud Development Environment
 
 Before configuring our database, we need to set up GitHub Codespaces, which provides a cloud-based development environment with tools like Python and Docker pre-installed.
@@ -77,8 +75,6 @@ With our repository created, launching the cloud environment takes one click:
 
 GitHub will build our cloud-based container (running on a Linux virtual machine) and open a full VS Code-like editor directly in our browser. This may take a minute the first time.
 
----
-
 ### Step 2: Switch to VS Code Desktop (Optional)
 
 While the browser experience is excellent, you might prefer working in your local **Visual Studio Code** application. The integration is seamless as we simply select `Open in VS Code Desktop` in the options to open a remote window after clicking the Codespaces button on the bottom left side.
@@ -93,8 +89,6 @@ To have all future Codespaces open automatically in your desktop VS Code:
 
 ![alt text](/images/posts/postgres-pgadmin-codespaces/5-codespace-editor.png "Codespace Editor Preference")
 
----
-
 ### Step 3: Resuming Our Codespaces
 
 You can reopen any of your active or stopped codespaces on GitHub or Visual Studio Code.
@@ -105,8 +99,6 @@ You can reopen any of your active or stopped codespaces on GitHub or Visual Stud
 ![alt text](/images/posts/postgres-pgadmin-codespaces/6-resume-codespace.png "Resume Codespace")
 
 * **To reconnect from VS Code Desktop:** Open the **Remote Explorer** sidebar (`Ctrl+Shift+P` / `Cmd+Shift+P` and search for it if not visible), find your codespace under "GitHub Codespaces", right-click it, and select **"Connect to Codespace"**.
-
----
 
 ### Step 4: Verify the Environment
 
@@ -123,22 +115,33 @@ You should see output confirming that both Python and Docker are installed and a
 
 ## Create .env File
 
-We'll run PostgreSQL using configuration stored in a `.env` file with the following variables:
+PostgreSQL and pgAdmin will be run as Docker containers, with connection credentials sourced from a `.env` file as follows:
 
 ```bash
+# PostgreSQL environment variables for Docker Compose
 POSTGRES_USER=root
 POSTGRES_PASSWORD=root
 POSTGRES_DB=db_test
+
+# pgAdmin environment variables for Docker Compose
+PGADMIN_DEFAULT_EMAIL=admin@admin.com
+PGADMIN_DEFAULT_PASSWORD=root
 ```
 
+### Add the .env File to .gitignore
+
+The `.env` file contains credentials that we certainly don't want to share publicly. Therefore, make sure we list this file in the gitignore file.
+
+---
 ## Create a Docker Volume
 
-First, let's create a named volume for persistent data storage.
+First, let's create two named volumes for permanent data storage, for Postgres and pgAdmin respectively.
 
 ```bash
 docker volume create postgres_data
+docker volume create pgadmin_data
 ```
-
+---
 ## Create a Docker Network
 
 Next, we create a network to attach a container to another container's networking stack directly, using the `--network container:<name|id>` flag format.
@@ -147,6 +150,13 @@ Next, we create a network to attach a container to another container's networkin
 docker network create postgres_network
 ```
 
+We can list the networks using `docker network list` or `docker network ls` command.
+
+```bash
+docker network list
+```
+
+---
 ## Run Postgres Container
 
 In this section, we'll simply run the command to spin up a Postgres container. For a deeper dive into Docker containerization concepts and configuration details, please refer to my dedicated post about [Scaling PostgreSQL with Docker Containerization](https://tantikristanti.github.io/posts/2026/03/postgres-docker/).
@@ -176,6 +186,7 @@ The parameters used for the container are as follows:
 | `-p 5432:5432`                              | Maps ports from container (on the right side of `:`) to host (on the left side of `:`) |
 | `postgres:18`                               | Uses PostgreSQL version 18 image                                                           |
 
+---
 ## Run pgAdmin Container
 
 With a running PostgreSQL database, let's add a visual management interface with pgAdmin to complete our development toolkit. pgAdmin 4 is the most popular open-source GUI tool for managing PostgreSQL databases. It provides an intuitive visual interface for designing tables, running queries, and managing complex databases.
@@ -183,9 +194,8 @@ With a running PostgreSQL database, let's add a visual management interface with
 Open a new terminal and run the following command to spin up the pgAdmin container. It will connect to the Postgres server over the same network (`postgres_network`) by referencing the container name `postgres_service`.
 
 ```bash
-docker run -it \
-  -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
-  -e PGADMIN_DEFAULT_PASSWORD="root" \
+docker run -it --rm \
+  --env-file=.env \
   -v pgadmin_data:/var/lib/pgadmin \
   -p 8085:80 \
   --network=postgres_network \
@@ -206,6 +216,7 @@ The parameters for configuring pgAdmin are as follows:
 | `--name pgadmin`                             | Gives container a human-readable name                                                                                                          |
 | `dpage/pgadmin4`                             | Uses latest stable version of the official pgAdmin 4 Docker image                                                                              |
 
+---
 ## Check the Running Containers
 
 Verify that both containers, Postgres and pgAdmin, are running with the `docker ps` command. Open a new terminal to check:
@@ -216,6 +227,7 @@ docker ps
 
 ![alt text](/images/posts/postgres-pgadmin-codespaces/7-running-containers.png "Running Containers")
 
+---
 ## Login to pgAdmin
 
 Once both containers (Postgres and pgAdmin) are running, open pgAdmin at `http://localhost:8085`. Log in with the credentials specified when configuring the container:
@@ -223,6 +235,7 @@ Once both containers (Postgres and pgAdmin) are running, open pgAdmin at `http:/
 - **Email:** admin@admin.com
 - **Password:** root
 
+---
 ### Create a Server
 
 Create a new server by right-clicking **Server → Register → Server**. Fill in the form:
@@ -242,6 +255,8 @@ Once the server is connected, verify that the `db_test` database defined in the 
 
 ![alt text](/images/posts/postgres-pgadmin-codespaces/9-db-test.png "db-test")
 
+---
+
 ## Orchestrating Services with Docker Compose
 
 Manually running Docker commands is great for learning, but managing multiple containers becomes a chore. With a Docker compose, we can:
@@ -258,9 +273,9 @@ services:
   postgres_service:
     image: postgres:18
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=db_test
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - "postgres_data:/var/lib/postgresql:rw"
     ports:
@@ -268,8 +283,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=root
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - "pgadmin_data:/var/lib/pgadmin"
     ports:
@@ -280,16 +295,23 @@ volumes:
   pgadmin_data:
 ```
 
+When running the `docker compose up` command, make sure we are in the path where the `docker-compose.yaml` and `.env` files are located. Docker Compose automatically loads `.env` from the compose file directory. If we want to load a different file, use `env_file:` instead.
+
+```bash
+env_file:
+  - .env
+```
+
 ### Compose Up
 
 To run a Docker Compose file, simply run the `docker-compose up` command. We need to ensure that no containers are conflicting by stopping and shutting them down first.
 
 ```bash
-docker stop $(docker ps)
+docker stop $(docker ps -aq)
 docker-compose up
 ```
 
-The first time we launch the stack with Docker Compose, we need to log in to pgAdmin and reconnect to the PostgreSQL server connection. The good news is, once we do this, Docker Compose will remember those settings. When we stop and restart the container, we only need to log back in because the server, database, and table configurations will be preserved.
+The first time we launch the stack with Docker Compose, we need to log in to pgAdmin and reconnect to the PostgreSQL server connection. The good news is, once we do this, Docker Compose will remember those settings. When we stop and restart the container, we only need to log in because the server, database, and table configurations will be preserved.
 
 ### Compose Down
 
@@ -299,6 +321,17 @@ To stop Docker containers, simply run the `docker-compose down` command.
 docker-compose down
 ```
 
+---
+## Push to GitHub Repository
+Push the docker compose file that we have created to the GitHub repository.
+
+```bash
+git add .
+git commit -m "add docker compose"
+git push
+```
+
+---
 ## References
 
 1. [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces)
