@@ -341,11 +341,11 @@ We’ve journeyed through the process of containerizing PostgreSQL with Docker, 
 
 **What we accomplished:**
 
-✅ **Established a containerized PostgreSQL environment** that runs consistently across any operating system with Docker installed.
-✅ **Mastered container lifecycle management**, from pulling images and running containers to stopping and removing them efficiently.
-✅ **Implemented best practices** like environment variable management via `.env` files and infrastructure-as-code with Docker Compose.
-✅ **Ensured data persistence** by configuring Docker volumes that survive container destruction and recreation.
-✅ **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces. 
+- ✅ **Established a containerized PostgreSQL environment** that runs consistently across any operating system with Docker installed.
+- ✅ **Mastered container lifecycle management**, from pulling images and running containers to stopping and removing them efficiently.
+- ✅ **Implemented best practices** like environment variable management via `.env` files and infrastructure-as-code with Docker Compose.
+- ✅ **Ensured data persistence** by configuring Docker volumes that survive container destruction and recreation.
+- ✅ **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces. 
 ---
 
 ## References

@@ -336,13 +336,13 @@ git push
 
 We’ve successfully transformed a traditionally complex local setup into a portable, cloud-native database environment, all with just a few clicks. What we accomplished:
 
-✅ **Launched a fully configured development workspace** using GitHub Codespaces, eliminating manual tool installation and environment inconsistencies.
+- ✅ **Launched a fully configured development workspace** using GitHub Codespaces, eliminating manual tool installation and environment inconsistencies.
 
-✅ **Provisioned a PostgreSQL database** with a persistent volume, configured via environment variables for security and reproducibility.
+- ✅ **Provisioned a PostgreSQL database** with a persistent volume, configured via environment variables for security and reproducibility.
 
-✅ **Deployed pgAdmin** as a web-based graphical interface to manage, explore, and query our database effortlessly.
+- ✅ **Deployed pgAdmin** as a web-based graphical interface to manage, explore, and query our database effortlessly.
 
-✅ **Orchestrated the entire stack** using Docker Compose, turning multiple manual `docker run` commands into a single, version-controlled `docker-compose.yaml` file that defines our infrastructure as code.
+- ✅ **Orchestrated the entire stack** using Docker Compose, turning multiple manual `docker run` commands into a single, version-controlled `docker-compose.yaml` file that defines our infrastructure as code.
 
 ---
 ## References

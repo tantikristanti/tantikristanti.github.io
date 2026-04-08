@@ -14,8 +14,6 @@ Building a reliable data pipeline shouldn't start with complex environment setup
 
 In this guide, we’ll construct a powerful, reproducible data ingestion environment using *PostgreSQL*, managed through the intuitive *pgAdmin* interface, all running seamlessly inside a *GitHub Codespace*. This approach eliminates the **"it works on my machine"** problem and turns our data project setup from a chore into a one-click process. We’ll walk through how to structure the data, provision a dedicated database, and leverage the cloud-native Codespaces environment to create a portable, shareable, and efficient foundation for any data-driven application.
 
-By the end of this post, we'll have a fully containerized data workspace that we can spin up anywhere, ready to ingest, explore, and analyze. Let’s begin.
-
 ---
 
 ## Prerequisites
@@ -94,18 +92,6 @@ The system architecture consists of three core services running in containers:
 * **Postgres:** The primary relational database for structured data storage.
 * **pgAdmin:** A web-based interface for database administration and analysis, enabling direct SQL query execution and exploration of the ingested data.
 * **Data Ingestion Service:** A custom application that automatically retrieves data from a specified GitHub repository and incrementally loads it into the Postgres database.
-
-### **Part 1: Project Structure**
-
-- Organizing data ingestion scripts
-- Setting up project directories
-- Understanding the data flow
-
-### **Part 2: Data Ingestion Implementation**
-
-- Writing Python scripts for data loading
-- Connecting to PostgreSQL
-- Creating schemas and tables
 
 ---
 
@@ -213,8 +199,8 @@ uv pip list
 
 ### Quick Environment Management Cheatsheet
 
-| Task               | Command                       |
-| ------------------ | ----------------------------- |
+| Task               | Command                     |
+| ------------------ | --------------------------- |
 | Create environment | `uv venv .venv`             |
 | Activate           | `source .venv/bin/activate` |
 | Install package    | `uv add package-name`       |
@@ -310,7 +296,87 @@ Finally, we verify the success of our pipeline by querying the database. Connect
 select count(*) from yellow_taxi_data_01_2026
 ```
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/13-data-ingestion-progress.png "Data ingestion progress")
+## From Notebook to Production Script
+
+While Jupyter Notebooks are excellent for exploration and prototyping, a robust data pipeline requires reproducible, executable scripts. We'll now convert our interactive notebook into a production-ready Python script and enhance it with command-line flexibility.
+
+**Step 1: Convert the Notebook to a Python Script**
+
+We'll use Jupyter's `nbconvert` tool to extract the executable Python code from our notebook:
+
+```bash
+uv run jupyter nbconvert --to=script data-ingestion.ipynb
+```
+
+This generates a `data-ingestion.py` file containing all the code from our notebook, ready to be run as a standalone script.
+
+**Step 2: Add some dependencies**
+
+Before enhancing our script, we need to install additional Python packages that will provide command-line interface functionality, progress tracking, and environment management, respectively:
+
+```bash
+uv add click tqdm python-dotenv
+```
+
+**Step 3: Add Command-Line Interface with Click**
+
+To make our ingestion script more flexible and reusable, we'll adapt it to accept user-defined parameters using [Click](https://click.palletsprojects.com/en/stable/), a Python package for creating command-line interfaces. We'll modify the script to accept three key arguments:
+
+1. **Source URL:** The URL where the CSVs reside.
+2. **Chunk Size:** The number of rows to process in each batch.
+3. **Table Name:** The target PostgreSQL table name for the ingested data.
+
+```bash
+@click.command()
+@click.option('--target_table', default='yellow_taxi_data_01_2026', help='Target database table name')
+@click.option('--url', required=True, help='URL or path to the data file (CSV or Parquet)')
+@click.option('--chunksize', default=100000, type=int, help='Chunk size (rows per batch)')
+def main(target_table, url, chunksize):
+    pg_user = os.getenv('POSTGRES_USER')
+    pg_pass = os.getenv('POSTGRES_PASSWORD')
+    pg_host = os.getenv('POSTGRES_HOST')
+    pg_port = os.getenv('POSTGRES_PORT')
+    pg_db = os.getenv('POSTGRES_DB')
+
+    logging.info('Starting taxi trip data ingestion...')
+    # Create Database Connection with fast executemany enabled
+    connection_engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/ny_taxi_db')
+    
+    # Read the data in batches
+    ingest_data(
+        url=url,
+        engine=connection_engine,
+        target_table=target_table,
+        chunksize=chunksize
+    )
+
+if __name__ == "__main__":
+    main()
+```
+
+**Step 4: Verify the Script Interface**
+
+To view the available command-line options and their descriptions, use the built-in `--help` flag:
+
+```bash
+uv run data-ingestion.py --help
+```
+
+**Step 5: Run the Script with Custom Parameters**
+
+Now you can execute the script with your own parameters. For example, to ingest a different dataset with a smaller chunk size:
+
+```bash
+uv run data-ingestion.py \
+    --url "https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-green-alpha/green_tripdata_2026-01.csv.gz" \
+    --target_table green_taxi_01_2026 \
+    --chunksize 50000
+```
+
+This command will download the specified file, process it in batches of 50,000 rows, and store the results in a table named `green_taxi_01_2026`.
+
+> **💡 Complete Code Access**
+> The full, production-ready script—including the `ingest_data()` function, error handling, and logging, is available in the [project repository](https://github.com/tantikristanti/postgres-pgadmin-codespaces).
 
 ---
 
@@ -320,7 +386,7 @@ Push our work to the GitHub repository.
 
 ```bash
 git add .
-git commit -m "add data ingestion notebook"
+git commit -m "add data ingestion scripts"
 git push
 ```
 
@@ -330,12 +396,12 @@ git push
 
 We've successfully built a complete data ingestion pipeline using modern, reproducible practices. Our journey covered:
 
-✅ **Environment Setup:** Leveraged GitHub Codespaces to eliminate "works on my machine" issues.
-✅ **Containerized Infrastructure:** Used Docker Compose to orchestrate PostgreSQL and pgAdmin.
-✅ **Isolated Development:** Created a virtual environment with `uv` for fast, conflict-free dependency management.
-✅ **Data Exploration:** Used Jupyter Notebooks to understand our NYC Taxi dataset.
-✅ **Batch Processing:** Implemented efficient chunk-based ingestion to handle 3.7+ million records.
-✅ **Automated Pipeline:** Connected Python scripts to PostgreSQL using SQLAlchemy for seamless data loading.
+- ✅ **Environment Setup:** Leveraged GitHub Codespaces to eliminate "works on my machine" issues.
+- ✅ **Containerized Infrastructure:** Used Docker Compose to orchestrate PostgreSQL and pgAdmin.
+- ✅ **Isolated Development:** Created a virtual environment with `uv` for fast, conflict-free dependency management.
+- ✅ **Data Exploration:** Used Jupyter Notebooks to understand our NYC Taxi dataset.
+- ✅ **Batch Processing:** Implemented efficient chunk-based ingestion to handle 3.7+ million records.
+- ✅ **Automated Pipeline:** Connected Python scripts to PostgreSQL using SQLAlchemy for seamless data loading.
 
 ---
 
@@ -345,3 +411,4 @@ We've successfully built a complete data ingestion pipeline using modern, reprod
 2. [Docker documentation](https://docs.docker.com/)
 3. [pgAdmin](https://www.pgadmin.org/)
 4. [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main)
+5. [Click documentation](https://click.palletsprojects.com/en/stable/)
