@@ -42,6 +42,8 @@ This guide assumes you've already completed the foundational setup from our comp
 POSTGRES_USER=root
 POSTGRES_PASSWORD=root
 POSTGRES_DB=ny_taxi_db
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
 
 # pgAdmin environment variables for Docker Compose
 PGADMIN_DEFAULT_EMAIL=admin@admin.com
@@ -52,7 +54,7 @@ PGADMIN_DEFAULT_PASSWORD=root
 
 Open your existing Codespace and verify everything is ready:
 
-#### Step A: Check Core Tools
+**Step A: Check Core Tools**
 
 In your Codespace terminal:
 
@@ -62,7 +64,7 @@ docker --version
 docker compose version
 ```
 
-#### Step B: Verify Running Services
+**Step B: Verify Running Services**
 
 ```bash
 docker ps
@@ -72,7 +74,7 @@ You should see both `postgres` and `pgadmin` containers with status **"Up"**.
 
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/1-postgres-pgadmin-up.png "Running infrastructures")
 
-#### Step C: Confirm pgAdmin Access
+**Step C: Confirm pgAdmin Access**
 
 - Open `http://localhost:8085` in your Codespace browser.
 - Login with credentials from your `.env` file.
@@ -105,14 +107,13 @@ Specifically, we will use certain data releases:
 * **Green trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/NYC-Taxi/releases/tag/v1.0.0-green-alpha)
 * **Taxi Zone Lookup Data:** [Download Link](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-zones-alpha)
 
-The data is sourced from official technology providers and is stored in the PARQUET format. For full details on the data dictionary, taxi zone maps, and publication schedule, please refer to the official TLC website.
+While the original data is stored in PARQUET format, for this project it has been converted to CSV and GZ-compressed. Details on the data dictionary, taxi zones, and schedule are available on the official TLC website.
 
 ---
 
 ## Create a Virtual Environment with UV
 
-Virtual environments create isolated, project-specific spaces for Python dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where **[uv](https://github.com/astral-sh/uv)**, an extremely fast Python
-package manager written in Rust, comes in.
+Virtual environments create isolated, project-specific spaces for Python dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where **[uv](https://github.com/astral-sh/uv)**, an extremely fast Python package manager written in Rust, comes in.
 
 While our initial PostgreSQL and pgAdmin setup might not require many Python packages, establishing a virtual environment from the start creates a **clean, reproducible foundation**. This prepares a conflict-free space for any future Python tools or applications that interact with our database.
 
@@ -120,18 +121,18 @@ While our initial PostgreSQL and pgAdmin setup might not require many Python pac
 
 Follow these steps to set up an isolated environment with UV.
 
-#### Install UV
+**Install UV**
 
 If `uv` is not already installed, you can install it using one of the following methods:
 
-* **Via the install script:**
+* *Via the install script:*
 
 ```bash
   # Download and install uv
   curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-* **Via pip:**
+* *Via pip:*
 
 ```bash
 pip install uv
@@ -143,7 +144,7 @@ After installation, verify uv on our device by running the following command:
   uv --version
 ```
 
-#### Initialize a Project
+**Initialize a Project**
 
 Initialize a project with `uv` to generate the essential configuration files: `.python-version`, `pyproject.toml`,`uv.lock` and `main.py`.
 
@@ -151,16 +152,23 @@ Initialize a project with `uv` to generate the essential configuration files: `.
   uv init --python=3.13
 ```
 
-- **`.python-version`** → The Python Guarantee
+- *`.python-version`* → The Python Guarantee
+
   This file specifies exactly which Python version our project requires. Tools such as `uv` and version managers such as `pyenv` read this file to automatically switch to the correct Python version when working on our project.
-- **`pyproject.toml`** → The Project Blueprint
+
+- *`pyproject.toml`* → The Project Blueprint
+
   This is the standard for Python project configuration replacing `requirements.txt` and `setup.py`.
-- **`uv.lock`** → The Dependency Snapshot
-  This is an **automatically generated lock file**, similar to `package-lock.json` in Node.js or `Pipfile.lock` in Pipenv. It records the **exact versions** of every package and sub-dependency installed in our project at a specific point in time.
-- **`main.py`** → The Starting Point
+
+- *`uv.lock`* → The Dependency Snapshot
+
+  This is an automatically generated lock file, similar to `package-lock.json` in Node.js or `Pipfile.lock` in Pipenv. It records the exact versions of every package and sub-dependency installed in our project at a specific point in time.
+
+- *`main.py`* → The Starting Point
+
   For this guide, we won't use it.
 
-#### Verify Python Versions
+**Verify Python Versions**
 
    Let's run the following command to display the Python version on both the host and virtual environment. We can see that both environments have different Python versions.
 
@@ -185,10 +193,10 @@ Activate the environment:
 
 ### Add Dependencies
 
-With our virtual environment active, we can install the Python packages needed for this project. Run the following command to install several dependencies, including sqlalchemy, psycopg2-binary, click, and jupyter:
+With our virtual environment active, we can install the Python packages needed for this project. Run the following command to install several dependencies, including pandas, sqlalchemy, psycopg2-binary, and python-dotenv:
 
 ```bash
-uv add sqlalchemy psycopg2-binary click jupyter
+uv add pandas requests sqlalchemy psycopg2-binary python-dotenv click tqdm
 ```
 
 After installation, we can verify the installed packages with:
@@ -257,16 +265,19 @@ We begin by creating a new Jupyter Notebook file, for example, `data-ingestion.i
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/6-import-libraries.png "Import libraries")
 
 **Step 2: Acquire and Load the Source Data**
+
 We'll source our data from this [`yellow_tripdata_2026-01.csv.gz`](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz). You can select any file you want by browsing the list of files in these [releases](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/tag/v1.0.0-yellow-alpha).
 
 When loading the CSV with `pandas`, we may encounter a `DtypeWarning`. This is a common issue where pandas infers inconsistent data types.
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/7-download-data-1.png "Load Data 1")
 
 **Step 3: Define the Data Schema**
+
 To resolve the warnings and ensure data integrity, we explicitly define the data type for each column when reading the file. This is especially important for datetime columns such as `tpep_pickup_datetime`.
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/8-data-type-conversion.png "Data Type Conversion")
 
 **Step 4: Reload data with specified schema**
+
 Reloading the data now confirms we are working with a substantial dataset, over 3.7 million yellow taxi trips for January 2026.
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/7-download-data-2.png "Load Data 2")
 
@@ -274,14 +285,17 @@ Let's examine the first few rows to understand the dataset's structure and the n
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/9-first-rows-data.png "First rows data")
 
 **Step 5: Implement Batch Processing**
+
 Ingesting millions of rows at once can strain memory and cause process failures. The recommended approach is to use **batch processing**. By reading the CSV in manageable chunks (e.g., 100,000 rows at a time), we control memory usage and make the process more resilient.
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/10-data-iteration.png "Data in batches")
 
 **Step 6: Establish the Database Connection**
+
 We use SQLAlchemy to create a connection engine to our running PostgreSQL container. This engine handles connection pooling and translates our Python operations into SQL.
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/11-database-connection.png "Database connection")
 
 **Step 7: Ingest Data into PostgreSQL**
+
 For each batch of data, we use the `to_sql` method to efficiently insert the rows into a new table (`yellow_taxi_data_01_2026`). We use the `if_exists='append'` parameter to add each chunk to the same table.
 
 ![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/12-data-ingestion.png "Data ingestion")
@@ -326,7 +340,7 @@ To make our ingestion script more flexible and reusable, we'll adapt it to accep
 2. **Chunk Size:** The number of rows to process in each batch.
 3. **Table Name:** The target PostgreSQL table name for the ingested data.
 
-```bash
+```python
 @click.command()
 @click.option('--target_table', default='yellow_taxi_data_01_2026', help='Target database table name')
 @click.option('--url', required=True, help='URL or path to the data file (CSV or Parquet)')
