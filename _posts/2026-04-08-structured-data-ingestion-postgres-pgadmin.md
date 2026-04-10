@@ -42,8 +42,8 @@ This guide assumes you've already completed the foundational setup from our comp
 POSTGRES_USER=root
 POSTGRES_PASSWORD=root
 POSTGRES_DB=ny_taxi_db
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
+POSTGRES_HOST=localhost # Postgres service running on host machine
+POSTGRES_PORT=5432 # Change this port if the port `5432` is occupied, such as `5431`.
 
 # pgAdmin environment variables for Docker Compose
 PGADMIN_DEFAULT_EMAIL=admin@admin.com
@@ -72,14 +72,14 @@ docker ps
 
 You should see both `postgres` and `pgadmin` containers with status **"Up"**.
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/1-postgres-pgadmin-up.png "Running infrastructures")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/1-postgres-pgadmin-up.png "Running infrastructures")
 
 **Step C: Confirm pgAdmin Access**
 
 - Open `http://localhost:8085` in your Codespace browser.
 - Login with credentials from your `.env` file.
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/2-pgadmin-server.png "pgAdmin")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/2-pgadmin-server.png "pgAdmin")
 
 If any step fails, **return to [the companion tutorial](https://tantikristanti.github.io/posts/2026/04/postgres-pgadmin-codespace/)** to fix your setup before proceeding.
 
@@ -87,7 +87,7 @@ If any step fails, **return to [the companion tutorial](https://tantikristanti.g
 
 Now that your environment is ready, this guide will shift focus to **building the data pipeline**. The following architecture outlines the general flow we will implement:
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/3-system-architecture.png "System Architecture")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/3-system-architecture.png "System Architecture")
 
 The system architecture consists of three core services running in containers:
 
@@ -105,7 +105,7 @@ Specifically, we will use certain data releases:
 
 * **Yellow trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/NYC-Taxi/releases/tag/v1.0.0-yellow-alpha)
 * **Green trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/NYC-Taxi/releases/tag/v1.0.0-green-alpha)
-* **Taxi Zone Lookup Data:** [Download Link](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-zones-alpha)
+* **Taxi Zone Lookup Data:** [Download Link](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/tag/taxi-zones)
 
 While the original data is stored in PARQUET format, for this project it has been converted to CSV and GZ-compressed. Details on the data dictionary, taxi zones, and schedule are available on the official TLC website.
 
@@ -181,7 +181,7 @@ Initialize a project with `uv` to generate the essential configuration files: `.
 
 The `uv run python -V` command will also create a `.venv` folder containing a copy of the Python interpreter.
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/4-python-versions.png "Python versions")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/4-python-versions.png "Python versions")
 
 ### Activate the Virtual Environment
 
@@ -250,7 +250,7 @@ Then, launch the Jupyter notebook server:
 uv run jupyter notebook
 ```
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/5-jupyter-notebook.png "Jupyter Notebook")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/5-jupyter-notebook.png "Jupyter Notebook")
 
 Once running, the server will provide a local URL (`http://localhost:8888`) and a security token. Open this URL in your browser and enter the token when prompted to access the notebook interface.
 
@@ -262,43 +262,43 @@ Let's start building the data ingestion pipeline.
 
 We begin by creating a new Jupyter Notebook file, for example, `data-ingestion.ipynb`. Inside this notebook, we first import the necessary Python libraries, including `pandas` for data manipulation and `sqlalchemy` for database interaction.
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/6-import-libraries.png "Import libraries")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/6-import-libraries.png "Import libraries")
 
 **Step 2: Acquire and Load the Source Data**
 
 We'll source our data from this [`yellow_tripdata_2026-01.csv.gz`](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz). You can select any file you want by browsing the list of files in these [releases](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/tag/v1.0.0-yellow-alpha).
 
 When loading the CSV with `pandas`, we may encounter a `DtypeWarning`. This is a common issue where pandas infers inconsistent data types.
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/7-download-data-1.png "Load Data 1")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/7-download-data-1.png "Load Data 1")
 
 **Step 3: Define the Data Schema**
 
 To resolve the warnings and ensure data integrity, we explicitly define the data type for each column when reading the file. This is especially important for datetime columns such as `tpep_pickup_datetime`.
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/8-data-type-conversion.png "Data Type Conversion")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/8-data-type-conversion.png "Data Type Conversion")
 
 **Step 4: Reload data with specified schema**
 
 Reloading the data now confirms we are working with a substantial dataset, over 3.7 million yellow taxi trips for January 2026.
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/7-download-data-2.png "Load Data 2")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/7-download-data-2.png "Load Data 2")
 
 Let's examine the first few rows to understand the dataset's structure and the nature of its columns.
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/9-first-rows-data.png "First rows data")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/9-first-rows-data.png "First rows data")
 
 **Step 5: Implement Batch Processing**
 
 Ingesting millions of rows at once can strain memory and cause process failures. The recommended approach is to use **batch processing**. By reading the CSV in manageable chunks (e.g., 100,000 rows at a time), we control memory usage and make the process more resilient.
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/10-data-iteration.png "Data in batches")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/10-data-iteration.png "Data in batches")
 
 **Step 6: Establish the Database Connection**
 
 We use SQLAlchemy to create a connection engine to our running PostgreSQL container. This engine handles connection pooling and translates our Python operations into SQL.
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/11-database-connection.png "Database connection")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/11-database-connection.png "Database connection")
 
 **Step 7: Ingest Data into PostgreSQL**
 
 For each batch of data, we use the `to_sql` method to efficiently insert the rows into a new table (`yellow_taxi_data_01_2026`). We use the `if_exists='append'` parameter to add each chunk to the same table.
 
-![alt text](/images/posts/structured-data-ingestion-postgres-pgadmin/12-data-ingestion.png "Data ingestion")
+![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/12-data-ingestion.png "Data ingestion")
 
 > You can find the complete notebook for this exercise in the [project repository](https://github.com/tantikristanti/postgres-pgadmin-codespaces/blob/main/data-ingestion.ipynb).
 
@@ -382,12 +382,12 @@ Now you can execute the script with your own parameters. For example, to ingest 
 
 ```bash
 uv run data-ingestion.py \
-    --url "https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-green-alpha/green_tripdata_2026-01.csv.gz" \
-    --target_table green_taxi_01_2026 \
+    --url "https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz" \
+    --target_table yellow_taxi_01_2026 \
     --chunksize 50000
 ```
 
-This command will download the specified file, process it in batches of 50,000 rows, and store the results in a table named `green_taxi_01_2026`.
+This command will download the specified file, process it in batches of 50,000 rows, and store the results in a table named `yellow_taxi_01_2026`.
 
 > **💡 Complete Code Access**
 > The full, production-ready script—including the `ingest_data()` function, error handling, and logging, is available in the [project repository](https://github.com/tantikristanti/postgres-pgadmin-codespaces).

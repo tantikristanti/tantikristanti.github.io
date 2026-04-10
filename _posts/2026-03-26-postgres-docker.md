@@ -15,6 +15,7 @@ PostgreSQL is an open-source object-relational database system that builds upon 
 Running Postgres with Docker offers several advantages. It allows us to deploy the database reliably across various operating systems and environments, ensuring seamless integration with our applications. Moreover, by containerizing Postgres, we can avoid the complexity of managing multiple versions for different stages of development. This approach enables us to maintain application stability without disrupting other environments, thereby reducing downtime and improving overall system reliability. This guide walks through the process of setting up and running PostgreSQL with Docker.
 
 ---
+
 ## Install and Run Docker Desktop
 
 Installing Docker is a straightforward process. The official [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/) documentation provides step-by-step instructions for installing it on various operating systems, including macOS, Windows, and Linux.
@@ -25,7 +26,9 @@ After installation, verify that Docker is working properly by running the versio
 docker version
 docker info
 ```
+
 ---
+
 ## Pull Docker Images from Docker Hub
 
 There are different methods to pull Docker images: using the Docker Desktop, CLI, and API.
@@ -38,7 +41,7 @@ While offering an easy-to-use development environment, downloading images with D
 2. Use the search bar to locate the desired image.
 3. Select the image and click **Pull** to initiate the download.
 
-![alt text](/images/posts/postgres-docker/1-docker-pull.png "Pull Postgres image")
+![alt text](/images/posts/2026-03-26-postgres-docker/1-docker-pull.png "Pull Postgres image")
 
 Additionally, we can pull the latest version of an image from Docker Hub directly within the Images view by selecting the image, clicking the **More options** button, and choosing **Pull**.
 
@@ -79,6 +82,7 @@ docker images
 ```
 
 ---
+
 ## Run Docker Containers
 
 To launch and manage images within isolated containers, we use the `docker run` command by specifying various arguments.
@@ -134,7 +138,7 @@ Or
 docker container ls
 ```
 
-![alt text](/images/posts/postgres-docker/2-docker-ps.png "Containers")
+![alt text](/images/posts/2026-03-26-postgres-docker/2-docker-ps.png "Containers")
 
 To display all containers, including those currently running and those that have stopped, add the all `-a` argument.
 
@@ -159,7 +163,9 @@ To remove the running containers, use the `docker rm` command.
 docker rm posgtres-docker-1
 docker rm posgtres-docker-2
 ```
+
 ---
+
 ## Create .env File
 
 Up to this point, we have successfully run the Postgres service. However, when creating a container, we have to enter environment variables one by one on the command line, which is impractical if we have many environment variables to set. Therefore, we create a separate file specifically for these environment variables, named `.env`.
@@ -187,7 +193,9 @@ Once the file is created, we can configure the container using this `.env` file 
 ```bash
 docker run --name posgtres-docker-3 --env-file=.env -p 5435:5432  -d postgres
 ```
+
 ---
+
 ## Create Docker Compose Yaml File
 
 Running containers manually in the terminal can be cumbersome, especially as the number of containers to be handled increases. To address this issue, we can create a `docker-compose.yml` file containing the configuration for running containers. This way, whenever we need to start a container, we simply run `compose up`, and conversely, when we need to stop it, we run `compose down` using the YAML file.
@@ -221,7 +229,9 @@ Run `compose down` to stop the service.
 ```bash
 docker compose down
 ```
+
 ---
+
 ## Connect to the Postgres Server
 
 There are several ways to connect to a running Postgres server, including using the terminal, pgAdmin, and connecting it as part of our programming code. In this guide, we'll connect to the server using the terminal and pgAdmin.
@@ -239,14 +249,10 @@ docker exec -it posgtres-docker psql -U postgres
 To use pgAdmin, we first need to install the tool according to our operating system from the [pgAdmin](https://www.pgadmin.org/download/) website.
 Then, we create a new server connection and configure it with the container name, username, and password specified during the container configuration.
 
-![alt text](/images/posts/postgres-docker/3-create-server-connection.png "Postgres Server")
----
 ## Create Database and Tables
 
 We will test our Postgres server by creating a database and table in the container terminal and check whether the results are synchronized in pgAdmin.
 
-![alt text](/images/posts/postgres-docker/4-create-database-table.png "Database and Table")
----
 ## Create Persistent Volume
 
 When a container is destroyed, the data will also be lost. To prevent this, we can store the data in a persistent volume by specifying the data location in the source or host machine `postgres-data` and the target or container `/var/lib/postgresql/data`. Therefore, the data will be mounted from the source to the target when a new container that specifies the volume is started. Volumes are persistent data stores for a container.
@@ -312,7 +318,7 @@ docker rm postgres-docker-4
 docker run --name postgres-docker-4 --env-file=.env -p 5436:5432 -v postgres-data:/var/lib/postgresql -d postgres
 ```
 
-![alt text](/images/posts/postgres-docker/5-volume-persist.png "Volume")
+![alt text](/images/posts/2026-03-26-postgres-docker/5-volume-persist.png "Volume")
 
 ### Configure the Volume in the Docker Compose File
 
@@ -335,6 +341,7 @@ volumes:
 ```
 
 ---
+
 ## Conclusion
 
 We’ve journeyed through the process of containerizing PostgreSQL with Docker, transforming a traditionally complex database setup into a portable, reproducible, and scalable foundation.
@@ -345,7 +352,8 @@ We’ve journeyed through the process of containerizing PostgreSQL with Docker, 
 - ✅ **Mastered container lifecycle management**, from pulling images and running containers to stopping and removing them efficiently.
 - ✅ **Implemented best practices** like environment variable management via `.env` files and infrastructure-as-code with Docker Compose.
 - ✅ **Ensured data persistence** by configuring Docker volumes that survive container destruction and recreation.
-- ✅ **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces. 
+- ✅ **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces.
+
 ---
 
 ## References
