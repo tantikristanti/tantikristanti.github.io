@@ -24,7 +24,7 @@ To follow along with this guide, you'll need a few tools and resources ready. If
 
 ### What You'll Need
 
-- *Docker and Docker Compose* installed and running on your system.
+- *[Docker](https://docs.docker.com/) and Docker Compose* installed and running on your system.
 - *A working PostgreSQL and pgAdmin environment* already set up from [Mastering Data Pipelines with Postgres &amp; pgAdmin in GitHub Codespaces](https://tantikristanti.github.io/posts/2026/04/structured-data-ingestion-postgres-pgadmin/).
 - *The data ingestion script*, available here: [`data-ingestion.py`](https://github.com/tantikristanti/postgres-pgadmin-codespaces/blob/main/data-ingestion.py).
 
@@ -46,11 +46,11 @@ docker-compose up -d
 
 ### Login to pgAdmin
 
-Once both containers are running, you can access the pgAdmin web interface by navigating to **[http://localhost:8085](http://localhost:8085)** in your browser.
+Once both containers are running, you can access the [pgAdmin](https://www.pgadmin.org/) web interface by navigating to **[http://localhost:8085](http://localhost:8085)** in your browser.
 
 ![alt text](/images/posts/2026-04-10-dockerizing-data-pipeline/1-pgadmin.png "pgAdmin")
 
-On your first login, you'll need to create a server connection to link pgAdmin with your PostgreSQL instance. Use the database credentials stored in your `.env` file for this setup.
+On your first login, you'll need to create a server connection to link pgAdmin with your [PostgreSQL](https://www.postgresql.org/) instance. Use the database credentials stored in your `.env` file for this setup.
 
 > 🔄 **Good news:** Because we configured the pgAdmin container using a Docker volume to persist its data, this server configuration will be saved automatically. On subsequent visits, you won’t need to set up the connection again, just log in and start managing your database.
 
@@ -95,7 +95,7 @@ docker network inspect [network]
 
 ## Evolving Our Architecture: A Fully Containerized Ecosystem
 
-We're evolving our system design from a hybrid approach to a *unified container architecture*, where every component (PostgreSQL, pgAdmin, and our data ingestion application) resides within the same Docker network. This transition from architecture **A** to **B** represents a significant shift in how our services communicate and interact.
+We're evolving our system design from a hybrid approach to a *unified container architecture*, where every component (PostgreSQL, pgAdmin, and our data ingestion application) resides within the same Docker network, inspired by the work of [DataTalks Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main). This transition from architecture **A** to **B** represents a significant shift in how our services communicate and interact.
 
 In our [previous guide](https://tantikristanti.github.io/posts/2026/04/structured-data-ingestion-postgres-pgadmin/), the data ingestion application ran on the host machine and connected to PostgreSQL via `localhost:5432`. This worked because we mapped the container's port 5432 to the host's port 5432.
 
@@ -198,7 +198,7 @@ nyc-taxi-data-ingest:v001 \
 
 - `nyc-taxi-data-ingest:v001`:
 
-  Uses our custom Docker image tagged `v001`, which contains the data ingestion Python script and its dependencies.
+  Uses our custom Docker image tagged `v001`, which contains the data ingestion [Python](https://www.python.org/) script and its dependencies.
 
 **Data processing parameters**
 
@@ -247,7 +247,10 @@ Our exploration covered:
 
 ## References
 
-1. [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces)
-2. [Docker documentation](https://docs.docker.com/)
-3. [pgAdmin](https://www.pgadmin.org/)
-4. [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main)
+1. DataTalksClub. (2026). [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main).
+2. Docker Inc. (2026). [Docker Docs](https://docs.docker.com/).
+3. GitHub Codespaces. (2026). [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces).
+4. pgAdmin Development Team. (2026). [pgAdmin](https://www.pgadmin.org/).
+5. Python Software Foundation. (2026). [Python](https://www.python.org/).
+6. The PostgreSQL Global Development Group. (2026). [PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database](https://www.postgresql.org/).
+7. UV. (2026). [UV](https://docs.astral.sh/uv/pip/environments/).

@@ -32,8 +32,8 @@ This guide assumes you've already completed the foundational setup from our comp
 
 **What the setup provides:**
 
-- ✅ A running GitHub Codespace.
-- ✅ Docker containers for PostgreSQL and pgAdmin.
+- ✅ A running [GitHub Codespace](https://docs.github.com/en/codespaces).
+- ✅ [Docker](https://docs.docker.com/) containers for [PostgreSQL](https://www.postgresql.org/) and [pgAdmin](https://www.pgadmin.org/).
 - ✅ pgAdmin configured with server connection.
 - ✅ Configured `.env` file with credentials. We will update the file slightly to change the database name as follows:
 
@@ -89,7 +89,7 @@ Now that your environment is ready, this guide will shift focus to **building th
 
 ![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/3-system-architecture.png "System Architecture")
 
-The system architecture consists of three core services running in containers:
+The system architecture inspired by the work of [DataTalks Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main) consists of three core services running in containers:
 
 * **Postgres:** The primary relational database for structured data storage.
 * **pgAdmin:** A web-based interface for database administration and analysis, enabling direct SQL query execution and exploration of the ingested data.
@@ -113,7 +113,7 @@ While the original data is stored in PARQUET format, for this project it has bee
 
 ## Create a Virtual Environment with UV
 
-Virtual environments create isolated, project-specific spaces for Python dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where **[uv](https://github.com/astral-sh/uv)**, an extremely fast Python package manager written in Rust, comes in.
+Virtual environments create isolated, project-specific spaces for [Python](https://www.python.org/) dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where **[uv](https://github.com/astral-sh/uv)**, an extremely fast Python package manager written in Rust, comes in.
 
 While our initial PostgreSQL and pgAdmin setup might not require many Python packages, establishing a virtual environment from the start creates a **clean, reproducible foundation**. This prepares a conflict-free space for any future Python tools or applications that interact with our database.
 
@@ -155,15 +155,12 @@ Initialize a project with `uv` to generate the essential configuration files: `.
 - *`.python-version`* → The Python Guarantee
 
   This file specifies exactly which Python version our project requires. Tools such as `uv` and version managers such as `pyenv` read this file to automatically switch to the correct Python version when working on our project.
-
 - *`pyproject.toml`* → The Project Blueprint
 
   This is the standard for Python project configuration replacing `requirements.txt` and `setup.py`.
-
 - *`uv.lock`* → The Dependency Snapshot
 
   This is an automatically generated lock file, similar to `package-lock.json` in Node.js or `Pipfile.lock` in Pipenv. It records the exact versions of every package and sub-dependency installed in our project at a specific point in time.
-
 - *`main.py`* → The Starting Point
 
   For this guide, we won't use it.
@@ -207,8 +204,8 @@ uv pip list
 
 ### Quick Environment Management Cheatsheet
 
-| Task               | Command                     |
-| ------------------ | --------------------------- |
+| Task               | Command                       |
+| ------------------ | ----------------------------- |
 | Create environment | `uv venv .venv`             |
 | Activate           | `source .venv/bin/activate` |
 | Install package    | `uv add package-name`       |
@@ -355,7 +352,7 @@ def main(target_table, url, chunksize):
     logging.info('Starting taxi trip data ingestion...')
     # Create Database Connection with fast executemany enabled
     connection_engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/ny_taxi_db')
-    
+  
     # Read the data in batches
     ingest_data(
         url=url,
@@ -421,8 +418,11 @@ We've successfully built a complete data ingestion pipeline using modern, reprod
 
 ## References
 
-1. [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces)
-2. [Docker documentation](https://docs.docker.com/)
-3. [pgAdmin](https://www.pgadmin.org/)
-4. [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main)
-5. [Click documentation](https://click.palletsprojects.com/en/stable/)
+1. DataTalksClub. (2026). [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main).
+2. Docker Inc. (2026). [Docker Docs](https://docs.docker.com/).
+3. GitHub Codespaces. (2026). [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces).
+4. Pallets. (2014). [Click documentation](https://click.palletsprojects.com/en/stable/).
+5. pgAdmin Development Team. (2026). [pgAdmin](https://www.pgadmin.org/).
+6. Python Software Foundation. (2026). [Python](https://www.python.org/).
+7. The PostgreSQL Global Development Group. (2026). [PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database](https://www.postgresql.org/).
+8. UV. (2026). [UV](https://docs.astral.sh/uv/pip/environments/).

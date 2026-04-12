@@ -8,9 +8,9 @@ tags:
   - docker
   - postgres
 ---
-Docker has become a widely adopted tool for developers due to its capacity to standardize development environments, streamline resource management, accelerate deployment workflows, and ensure application isolation through containerization. By packaging applications into standardized, self-sufficient units called containers, Docker ensures all necessary components, such as code, libraries, tools, and runtime environments, are included, enabling seamless execution across diverse environments.
+[Docker](https://docs.docker.com/) has become a widely adopted tool for developers due to its capacity to standardize development environments, streamline resource management, accelerate deployment workflows, and ensure application isolation through containerization. By packaging applications into standardized, self-sufficient units called containers, Docker ensures all necessary components, such as code, libraries, tools, and runtime environments, are included, enabling seamless execution across diverse environments.
 
-PostgreSQL is an open-source object-relational database system that builds upon SQL functionality while offering advanced features to securely manage and scale complex data operations. It has become a go-to choice for many applications, but managing multiple versions for various reasons, including implementations across different platforms and environments, can be cumbersome.
+[PostgreSQL](https://www.postgresql.org/) is an open-source object-relational database system that builds upon SQL functionality while offering advanced features to securely manage and scale complex data operations. It has become a go-to choice for many applications, but managing multiple versions for various reasons, including implementations across different platforms and environments, can be cumbersome.
 
 Running Postgres with Docker offers several advantages. It allows us to deploy the database reliably across various operating systems and environments, ensuring seamless integration with our applications. Moreover, by containerizing Postgres, we can avoid the complexity of managing multiple versions for different stages of development. This approach enables us to maintain application stability without disrupting other environments, thereby reducing downtime and improving overall system reliability. This guide walks through the process of setting up and running PostgreSQL with Docker.
 
@@ -234,7 +234,7 @@ docker compose down
 
 ## Connect to the Postgres Server
 
-There are several ways to connect to a running Postgres server, including using the terminal, pgAdmin, and connecting it as part of our programming code. In this guide, we'll connect to the server using the terminal and pgAdmin.
+There are several ways to connect to a running Postgres server, including using the terminal, [pgAdmin](https://www.pgadmin.org/), and connecting it as part of our programming code. In this guide, we'll connect to the server using the terminal and pgAdmin.
 
 ### Exec Into the Posgtres Container
 
@@ -358,5 +358,6 @@ We’ve journeyed through the process of containerizing PostgreSQL with Docker, 
 
 ## References
 
-1. [Docker documentation](https://docs.docker.com/)
-2. [pgAdmin](https://www.pgadmin.org/)
+1. Docker Inc. (2026). [Docker Docs](https://docs.docker.com/).
+2. pgAdmin Development Team. (2026). [pgAdmin](https://www.pgadmin.org/).
+3. The PostgreSQL Global Development Group. (2026). [PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database](https://www.postgresql.org/).
