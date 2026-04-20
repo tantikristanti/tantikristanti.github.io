@@ -103,9 +103,9 @@ For this demonstration, we will use the public [NYC Taxi &amp; Limousine Commiss
 
 Specifically, we will use certain data releases:
 
-* **Yellow trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/NYC-Taxi/releases/tag/v1.0.0-yellow-alpha)
-* **Green trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/NYC-Taxi/releases/tag/v1.0.0-green-alpha)
-* **Taxi Zone Lookup Data:** [Download Link](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/tag/taxi-zones)
+* **Yellow trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/Datasets/releases/tag/v1.0.0-yellow-alpha)
+* **Green trip data (2024-2026):** [Download Link](https://github.com/tantikristanti/Datasets/releases/tag/v1.0.0-green-alpha)
+* **Taxi Zone Lookup Data:** [Download Link](https://github.com/tantikristanti/Datasets/releases/tag/taxi-zones)
 
 While the original data is stored in PARQUET format, for this project it has been converted to CSV and GZ-compressed. Details on the data dictionary, taxi zones, and schedule are available on the official TLC website.
 
@@ -263,7 +263,7 @@ We begin by creating a new Jupyter Notebook file, for example, `data-ingestion.i
 
 **Step 2: Acquire and Load the Source Data**
 
-We'll source our data from this [`yellow_tripdata_2026-01.csv.gz`](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz). You can select any file you want by browsing the list of files in these [releases](https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/tag/v1.0.0-yellow-alpha).
+We'll source our data from this [`yellow_tripdata_2026-01.csv.gz`](https://github.com/tantikristanti/Datasets/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz). You can select any file you want by browsing the list of files in these [releases](https://github.com/tantikristanti/Datasets/releases/tag/v1.0.0-yellow-alpha).
 
 When loading the CSV with `pandas`, we may encounter a `DtypeWarning`. This is a common issue where pandas infers inconsistent data types.
 ![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/7-download-data-1.png "Load Data 1")
@@ -379,7 +379,7 @@ Now you can execute the script with your own parameters. For example, to ingest 
 
 ```bash
 uv run data-ingestion.py \
-    --url "https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz" \
+    --url "https://github.com/tantikristanti/Datasets/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-01.csv.gz" \
     --target_table yellow_taxi_01_2026 \
     --chunksize 50000
 ```

@@ -174,7 +174,7 @@ To automatically load data from the internet into our Postgres database, we run 
 docker run -it --rm --env-file=.env-docker \
 --network=postgres-pgadmin-codespaces_postgres_network \
 nyc-taxi-data-ingest:v001 \
---url "https://github.com/tantikristanti/NYC-Taxi-Dataset/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-02.csv.gz" \
+--url "https://github.com/tantikristanti/Datasets/releases/download/v1.0.0-yellow-alpha/yellow_tripdata_2026-02.csv.gz" \
 --target_table yellow_taxi_02_2026 \
 --chunksize=50000
 ```
