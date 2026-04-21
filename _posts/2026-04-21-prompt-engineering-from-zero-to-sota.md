@@ -1,0 +1,577 @@
+---
+title: '🔧 From Zero‑Shot to SOTA: The Guide to Prompt Engineering for Developers'
+date: 2026-04-21
+collection: posts
+permalink: /posts/2026/04/prompt-engineering-from-zero-to-sota/
+toc: true
+tags:
+  - prompt-engineering
+  - zero-shot
+  - few-shot
+  - cot
+  - got
+---
+Prompt engineering has evolved dramatically, from simple conversations about "how to do it?" to understanding "what the model sees". We are now entering the era of **system‑level orchestration**: constraints, verification loops, and multi‑step reasoning architectures that transform Large Language Models (LLMs) from text generators into reliable engineering partners.
+
+This post is a **hands‑on guide** that moves us from the simplest prompt patterns all the way to state‑of‑the‑art (SOTA) techniques used in production environments. Every section contains concrete examples in **Python** and **regular expressions**.
+
+---
+
+## ♻️ Prerequisites
+
+To follow this guide, you should have:
+
+- Experience using LLMs on platforms such as OpenAI, Ollama, or Hugging Face, including valid API access and familiarity with the libraries needed to interact with their APIs.
+- A basic understanding of how LLMs work, including how they interpret inputs and generate outputs.
+- Strong Python skills, along with a good grasp of regular expressions (regex).
+
+---
+
+## 📑 Sections & Structure
+
+The post is divided into seven progressive parts, each building on the previous one:
+
+1. [What Is Prompt Engineering and Why It Still Matters in 2026](#-what-is-prompt-engineering-and-why-it-still-matters-in-2026)
+2. [Zero‑Shot, One‑Shot, and Few‑Shot Prompting](#-zeroshot-oneshot-and-fewshot-prompting)
+3. [Chain‑of‑Thought (CoT): Teaching the Model to Reason](#-chainofthought-cot-teaching-the-model-to-reason)
+4. [Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT): Branching Reasoning](#-treeofthoughts-tot-and-graphofthoughts-got-branching-reasoning)
+5. [Agentic Patterns: ReAct and Tool Use](#-agentic-patterns-react-and-tool-use)
+6. [Production‑Grade Techniques: Structured Outputs, Validation, and Automatic Optimisation](#-productiongrade-techniques-structured-outputs-validation-and-automatic-optimisation)
+7. [State‑of‑the‑Art (SOTA): What the Latest Research Says](#-stateoftheart-sota-what-the-latest-research-says)
+
+Each section includes examples in Python or regex. The following diagram summarises the progression of methods discussed in this guide.
+
+<img src="/images/posts/2026-04-21-prompt-engineering-from-zero-to-sota/1-prompt-engineering-methods.png" width="90%" alt="Prompt engineering methods" />
+
+---
+
+## 🧱 What Is Prompt Engineering and Why It Still Matters in 2026
+
+At its core, prompt engineering is the practice of designing, structuring, and optimising the input you give to an LLM to elicit the most useful, accurate, and reliable response.
+
+In 2026, the field has matured into a formal discipline. A comprehensive taxonomy from Renmin University and Microsoft AI [[1]](https://link.springer.com/content/pdf/10.1007/s11704-025-50058-z.pdf) categorises prompt engineering across four pillars:
+
+1. **Profile and Instruction**: defines the AI’s role and task requirements (e.g., acting as a medical expert).
+2. **Knowledge**: integrates real‑time data retrieval to combat misinformation.
+3. **Reasoning and Planning**: enhances problem‑solving through step‑by‑step logic and external tools.
+4. **Reliability**: reduces biases and ensures stable, ethical responses.
+
+For developers, this means moving beyond single‑shot "write code" prompts toward structured, verifiable, and repeatable interactions.
+
+---
+
+## 🎯 Zero‑Shot, One‑Shot, and Few‑Shot Prompting
+
+The simplest and most widely used category of prompting is *in‑context learning*: giving the model examples of the desired behaviour directly inside the prompt. The number of examples determines the name [[2]](https://www.digitalocean.com/community/tutorials/_few-shot-prompting-techniques-examples-best-practices):
+
+1. **Zero‑shot**: no examples, only instructions.
+2. **One‑shot**: a single example.
+3. **Few‑shot**: two or more examples (typically 3–6).
+
+Few‑shot prompting works by presenting the model with a sequence of examples, allowing it to recognise patterns from the input–output pairs provided. Because the model treats the prompt as a continuous context, it can generalise from these examples to generate accurate responses.
+
+### 🐍 Python Examples: Generate Function DocString
+
+**Zero‑shot**
+
+```python
+from openai import OpenAI
+client = OpenAI(base_url="http://localhost:11434/v1", 
+                api_key="ollama")
+
+llm = "deepseek-v3.2:cloud"
+
+response = client.chat.completions.create(
+    model=llm,
+    messages=[
+        {"role": "system", "content": "You are a Python documentation expert."},
+        {"role": "user", "content": "Write a docstring for a function that validates an email address using regex."}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+> ***Responses generated by Deepseek V3.2***
+
+<img src="/images/posts/2026-04-21-prompt-engineering-from-zero-to-sota/2-zero-shot.png" width="90%" alt="Zero-shot" />
+
+**Few‑shot**
+
+```python
+prompt = """
+Write a concise docstring for each function.
+
+def celsius_to_fahrenheit(c):
+    return (c * 9/5) + 32
+Docstring: Convert Celsius to Fahrenheit.
+
+def is_prime(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5)+1):
+        if n % i == 0: return False
+    return True
+Docstring: Check if a number is prime.
+
+def validate_email(email):
+    import re
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email))
+Docstring:
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a Python documentation expert."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+```
+
+> ***Responses generated by Deepseek V3.2***
+
+<img src="/images/posts/2026-04-21-prompt-engineering-from-zero-to-sota/3-few-shot.png" width="100%" alt="Few-shot" />
+
+### 🔤 Regex Examples: IP Address Validation
+
+**Zero‑shot**
+
+```python
+response = client.chat.completions.create(
+    model=llm,
+    messages=[
+        {"role": "system", "content": "You are a Regex expert."},
+        {"role": "user", "content": "Write a regex pattern that matches IPv4 addresses (e.g., 192.168.1.1)."}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+**Few‑shot**
+(with a correct pattern that rejects octets >255)
+
+```python
+prompt = """
+Generate a regex pattern that matches valid IPv4 addresses.
+
+Example 1:
+Input: "192.168.0.1"
+Expected pattern: ^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+
+Example 2:
+Input: "10.0.0.255"
+Expected pattern: same as above
+
+Example 3 (should NOT match):
+Input: "999.999.999.999"
+Expected: pattern should reject values >255 per octet.
+
+Provide the final regex with an explanation of each component.
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a regex expert."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+    print(response.choices[0].message.content)
+except Exception as e:
+    print(f"Error occurred: {e}")
+
+```
+
+### 💡 Best Practice for Few‑Shot
+
+Structure our examples consistently, label them clearly, and sort examples by complexity (simple → complex) [[3]](https://www.pmi.org/blog/how-to-write-better-prompts-framework). A 2026 study on Few‑Shot Architecture Prompting (FSAP) systematically analysed the effect of the number of examples (n = 1, 2, 3, 4, 5, 6) and found that **3–4 well‑chosen examples** often provide the optimal trade‑off between accuracy and token cost [[4]](https://arxiv.org/abs/2512.24120v2).
+
+## 🧩 Chain‑of‑Thought (CoT): Teaching the Model to Reason
+
+Zero‑shot and few‑shot work well for pattern recognition, but they fail on tasks that require multi‑step reasoning. Chain‑of‑Thought (CoT) prompting solves this by explicitly instructing the model to "think step by step", or, even better, by showing it how to reason through examples.
+
+There are two flavours:
+
+- Zero‑shot CoT: Add a phrase like "Let’s think step by step" to our prompt.
+- Few‑shot CoT: Provide solved examples where each example contains a question, a step‑by‑step reasoning chain, and the final answer.
+
+### 🐍 Python Examples: Debugging a Complex Function
+
+**Zero‑shot CoT**
+
+```python
+prompt = """
+For every bug you find, think step by step before writing the fix.
+
+Function:
+def merge_intervals(intervals):
+    if not intervals:
+        return []
+    intervals.sort()
+    merged = [intervals[0]]
+    for current in intervals[1:]:
+        if current[0] <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], current[1])
+        else:
+            merged.append(current)
+    return merged
+
+This function fails for: merge_intervals([[1,4],[2,3]]).
+
+Let’s think step by step, then provide the corrected function.
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a senior Python debugger."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+
+```
+
+**Few‑shot CoT**
+
+Few-shot Chain-of-Thought (CoT) prompting is especially effective for code generation because it encourages the model to break problems down into smaller, manageable steps. Instead of focusing only on the final output, it guides the model to reason through the process. In programming tasks, this structured reasoning helps reduce hallucinated code by prompting the model to check its logic before producing a solution.
+
+```python
+prompt = """
+Example problem:
+Question: What is the output of [x**2 for x in range(5)]?
+Answer: [0,1,4,9,16]
+Reasoning: range(5) produces [0,1,2,3,4]. Square each: 0,1,4,9,16.
+
+Now solve:
+Question: merge_intervals([[1,4],[2,3]]) currently returns [[1,4]] but should return [[1,4]] (it’s correct). 
+Answer: 
+Reasoning: 
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a step‑by‑step reasoning assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+  
+```
+
+### 🔤 Regex Example: Parsing Log Files
+
+By demonstrating the reasoning process, we will get more robust extraction, even on noisy or edge‑case log formats.
+
+```python
+prompt = """
+Parse timestamps from the following log lines.
+
+Example reasoning:
+Line: "2025-03-15 08:23:45 ERROR Failed to connect"
+Step 1: Identify timestamp format: YYYY-MM-DD HH:MM:SS.
+Step 2: Extract group with regex: (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).
+Step 3: Apply to the line → "2025-03-15 08:23:45"
+
+Now process this line:
+"2026-04-21 14:05:12 INFO User logged in"
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a Regex expert."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+```
+
+## 🌳 Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT): Branching Reasoning
+
+Chain‑of‑Thought follows a single linear path. Real problem‑solving, however, often requires exploring multiple possibilities, backtracking, and synthesising insights from different branches. That is where Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT) come in.
+
+- **Tree‑of‑Thoughts (ToT)** encourages the LLM to generate multiple reasoning paths simultaneously, evaluate each one, and select the most promising branch to develop further, much like a human brainstorming alternative solutions.
+- **Graph‑of‑Thoughts (GoT)** goes even further, representing reasoning as a graph where thoughts can be merged, looped, and combined non‑linearly. In complex financial reasoning tasks, GoT has been shown to achieve 15–25% higher accuracy than baseline methods while reducing hallucination rates by 25–30% [[5]](https://labs.sciety.org/articles/by?article_doi=10.20944/preprints202507.0553.v1).
+
+### 🌲 Python Example: Optimising a Recursive Function
+
+**Tree‑of‑Thoughts prompt**
+
+```python
+prompt = """
+Solve this problem using Tree‑of‑Thoughts reasoning.
+
+Problem: Write a recursive function to compute the Fibonacci sequence efficiently, without exponential blow‑up.
+
+Thought 1 (Memorisation approach): Use a dictionary to cache computed values.
+Thought 2 (Iterative approach): Convert recursion to iteration, O(n) time, O(1) space.
+Thought 3 (Matrix exponentiation): O(log n) time but more complex.
+
+Evaluate each approach for:
+- Readability
+- Time complexity
+- Stack safety for n=1000
+
+Select the best approach and write the final Python code.
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a Python expert."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+```
+
+### 🔤 Regex Example: Multiple Parsing Strategies
+
+**Graph‑of‑Thoughts prompt**
+
+```python
+prompt = """
+Parse email addresses from messy text. Explore three strategies:
+
+Tree branch A: Use standard regex: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+Branch B: Use a more permissive regex that handles quoted local parts.
+Branch C: Use a two‑stage approach: first locate '@', then validate surrounding characters.
+
+For each branch, evaluate false‑positive and false‑negative rates on this sample:
+"contact@example.com, invalid@, "name@domain""
+
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a Regex expert."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+```
+
+### 📊 Adaptive Graph of Thoughts (AGoT)
+
+Adaptive Graph of Thoughts (AGoT) dynamically decomposes problems into Directed Acyclic Graphs (DAGs) at test time, selectively expanding only necessary sub‑problems. On the "Game of 24" math puzzle, AGoT achieved a +400% improvement over baseline CoT methods [[6]](https://arxiv.org/pdf/2502.05078).
+
+## 🤖 Agentic Patterns: ReAct and Tool Use
+
+Once our prompts require external actions, including for running code, querying databases, calling APIs, we need an agentic pattern. The most influential is ReAct (Reasoning + Acting), which interleaves chain‑of‑thought reasoning with explicit tool calls.
+
+In a ReAct loop, the LLM outputs:
+
+- Thought: A reasoning step.
+- Action: A tool name and arguments.
+- Observation: The result of the tool execution.
+
+<img src="/images/posts/2026-04-21-prompt-engineering-from-zero-to-sota/4-react.png" width="90%" alt="ReAct" />
+
+This loop continues until the task is complete.
+
+### 🐍 Python Example: Code Execution Agent
+
+**ReAct prompt**
+
+The ReAct pattern is especially valuable for code generation because the agent can iteratively test, debug, and refine its own code based on execution feedback. (In a real production system, we would implement the tools, here we illustrate the prompting structure.)
+
+```python
+prompt = """
+Follow this format exactly:
+
+Thought: [your reasoning about what to do next]
+Action: run_python
+Action Input: [valid Python code as a string]
+Observation: [output of the executed code]
+... (repeat as needed)
+Thought: Task complete. Final answer: [result]
+
+Task: Write a function that returns the first 10 Fibonacci numbers, then execute it and verify the result.
+"""
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a Python code execution agent."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+```
+
+### 🔤 Regex Example: Iterative Refinement
+
+This iterative, feedback‑driven approach produces regexes that are far more robust than those generated in a single pass.
+
+```python
+prompt = """
+Task: Build a regex to match all hashtags in a tweet, excluding those inside URLs.
+
+Thought: First, I need a base pattern for hashtags: #[A-Za-z0-9_]+
+Action: run_regex_tester
+Action Input: pattern='#[A-Za-z0-9_]+', text='Check out #AI and https://example.com/#section'
+Observation: Matches '#AI' and '#section' (incorrect – '#section' is part of a URL)
+Thought: I need to exclude hashtags that appear after '://' or after '/'.
+Action: refine_pattern
+...
+
+"""
+
+try:
+    response = client.chat.completions.create(
+        model=llm,
+        messages=[
+            {"role": "system", "content": "You are a Regex generator agent."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
+
+    result = response.choices[0].message.content
+    print(result)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+```
+
+> **Note for production**: For code generation, some practitioners find that pure ReAct has a limitation where every piece of code is treated as a string inside a tool call. Alternatives such as CodeAct treat code as a first‑class action, but ReAct remains the most widely adopted pattern due to its simplicity and broad model support.
+
+## 🏭 Production‑Grade Techniques: Structured Outputs, Validation, and Automatic Optimisation
+
+In production, we cannot afford hallucinated formats, invalid JSON, or regex that silently fails on edge cases. The following techniques are mandatory for reliable systems.
+
+### 🏗 Structured Outputs with Pydantic
+
+Force the LLM to return output that strictly matches a predefined schema.
+
+```python
+from pydantic import BaseModel, Field
+from langchain_core.output_parsers import PydanticOutputParser
+
+class CodeFix(BaseModel):
+    reasoning: str = Field(..., description="Step‑by‑step explanation")
+    fixed_code: str = Field(..., description="The corrected Python code")
+    confidence: float = Field(..., ge=0, le=1)
+
+parser = PydanticOutputParser(pydantic_object=CodeFix)
+```
+
+### 🎯 Guided Generation
+
+Libraries like [Outlines](https://github.com/dottxt-ai/outlines) and [Guidance](https://guidance.readthedocs.io/en/latest/index.html) allow us to constrain LLM output to a specific pattern at generation time, not just post‑validation. This guarantees format compliance and can be nearly as fast as unconstrained generation.
+
+```python
+# Outlines example – force email format
+from outlines import models, generate
+
+model = models.openai("gpt-4o")
+generator = generate.regex(model, r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+email = generator("Generate a valid email address for testing")
+```
+
+### 🤖 Automatic Prompt Optimisation (DSPy, OPRO, GEPA)
+
+Manual prompt tweaking is tedious and non‑scalable. The new wave of automatic optimisation frameworks treats prompt engineering as a search problem.
+
+- **DSPy** allows us to write prompts declaratively, then optimises them automatically using training data and compilers that generate few‑shot examples, refine instructions, and try structured variations. In one case, DSPy increased a model’s score from 60.7% to 82% simply by optimising the prompt.
+- **GEPA** (Generalized Error‑driven Prompt Augmentation) iteratively proposes new prompt variants based on error patterns, achieving significant gains on mathematical reasoning tasks.
+- **OPRO** (Optimization by PROmpting) from Google DeepMind uses the LLM itself as an optimiser, iteratively refining prompts based on past performance.
+
+A 2026 study found that DSPy‑based declarative learning can improve factual accuracy by 30–45% while reducing hallucinations by approximately 25% [[7]](https://browse-export.arxiv.org/abs/2604.04869).
+
+### 🧪 Simple But Powerful: Prompt Repetition
+
+Remarkably, a [Google Research paper](https://arxiv.org/abs/2512.14982) found that simply repeating the prompt twice (without increasing output length) can boost accuracy from 21% to 97% on non‑reasoning tasks [[8]](https://arxiv.org/abs/2512.14982).
+
+## 🚀 State‑of‑the‑Art (SOTA): What the Latest Research Says
+
+As of early 2026, the cutting edge of prompt engineering includes:
+
+| Technique                              | Key Idea                                         | Performance Gain                                                                               |
+| -------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Graph‑of‑Thoughts (GoT)              | Graph‑based reasoning with merging and loops    | 15–25% accuracy improvement, 25–30% fewer hallucinations [[5]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5339795)                                 |
+| Adaptive GoT                           | Dynamically builds DAGs at test time             | +46.2% on GPQA Diamond, +400% on Game of 24[[6]](https://arxiv.org/pdf/2502.05078)                |
+| DSPy / GEPA                            | Declarative, compiler‑based prompt optimisation | 30–45% better factual accuracy[[7]](https://browse-export.arxiv.org/abs/2604.04869)              |
+| Confidence‑Informed Self‑Consistency | Weight reasoning paths by model confidence       | Improved consistency without extra samples[[9]](https://aclanthology.org/2025.findings-acl.1030/) |
+| UtilityMax Prompting                   | Formal mathematical task specification           | Enables multi‑objective optimisation[[10]](https://arxiv.org/abs/2603.11583)                     |
+
+## 🏁 Conclusion
+
+Prompt engineering in 2026 is no longer about finding "magic words". It is a structured engineering discipline with a clear taxonomy, proven patterns, and automated optimisation tools. Whether we are writing a simple regex validator or orchestrating a multi‑agent code generation system, the techniques covered in this guide, will help us build LLM‑powered systems that are reliable, verifiable, and production‑ready.
+
+- ✅ Start simple.
+- ✅ Add examples.
+- ✅ Teach reasoning.
+- ✅ Validate outputs.
+- ✅ When we hit the limits of manual prompting, let the machines optimise themselves.
+
+---
+
+## 📚 References
+
+1. Liu, Y. Y., Zheng, Z., Zhang, F., Feng, J. C., Fu, Y. Y., Zhai, J. D., ... & Du, X. Y. (2026). **A comprehensive taxonomy of prompt engineering techniques for large language models**. Frontiers of Computer Science, 20(3), 2003601. https://link.springer.com/content/pdf/10.1007/s11704-025-50058-z.pdf
+2. Payong, Adrien and Shaoni Mukherjee. (April 22, 2025). **Few-Shot Prompting: Techniques, Examples, and Best Practices**. https://www.digitalocean.com/community/tutorials/_few-shot-prompting-techniques-examples-best-practices
+3. Huhtonen, Igor. (November 12, 2025). **Building Blocks for Better Prompts: A Modular Prompt Engineering Framework**. https://www.pmi.org/blog/how-to-write-better-prompts-framework
+4. Vysyaraju, C., Duvvuri, R., Goyal, A., Ignatov, D., & Timofte, R. (2025). **Enhancing llm-based neural network generation: Few-shot prompting and efficient validation for automated architecture design**. arXiv preprint arXiv:2512.24120. https://arxiv.org/abs/2512.24120v2
+5. Joshi, Satyadhar. (July 7, 2025). **Review of Prompt Engineering Techniques in Finance: An Evaluation of Chain-of-Thought, Tree-of-Thought, and Graph-of-Thought Approaches**. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5339795
+6. Pandey, T., Ghukasyan, A., Goktas, O., & Radha, S. K. (2025). **Adaptive graph of thoughts: Test-time adaptive reasoning unifying chain, tree, and graph structures**. arXiv preprint arXiv:2502.05078. https://arxiv.org/pdf/2502.05078
+7. Ruksana, S., Kurra, S. K., & Baradwaj, T. S. (2026). **Optimizing LLM Prompt Engineering with DSPy Based Declarative Learning**. arXiv preprint arXiv:2604.04869. https://browse-export.arxiv.org/abs/2604.04869
+8. Leviathan, Y., Kalman, M., & Matias, Y. (2025). **Prompt Repetition Improves Non-Reasoning LLMs**. arXiv preprint arXiv:2512.14982. https://arxiv.org/abs/2512.14982
+9. Taubenfeld, A., Sheffer, T., Ofek, E., Feder, A., Goldstein, A., Gekhman, Z., & Yona, G. (2025, July). **Confidence improves self-consistency in llms**. In Findings of the Association for Computational Linguistics: ACL 2025 (pp. 20090-20111). https://aclanthology.org/2025.findings-acl.1030/
+10. Marom, O. (2026). **UtilityMax Prompting: A Formal Framework for Multi-Objective Large Language Model Optimization**. arXiv preprint arXiv:2603.11583. https://arxiv.org/abs/2603.11583
