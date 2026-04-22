@@ -25,6 +25,35 @@ To follow this guide, you should have:
 - A basic understanding of how LLMs work, including how they interpret inputs and generate outputs.
 - Strong Python skills, along with a good grasp of regular expressions (regex).
 
+### Initialize the Conversation Client and LLM
+
+All code examples in this blog assume you have a client and an llm variable defined as shown below. 
+
+**OpenAI API**
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://api.openai.com/v1"  # or your preferred endpoint
+)
+llm = "gpt-4o"
+```
+
+**Alternative: running locally with Ollama**
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://localhost:11434/v1",
+    api_key="ollama"  # Ollama ignores the key, but a value is required
+)
+
+llm = "deepseek-v3.2:cloud"  # or any model you have pulled via Ollama
+```
+
 ---
 
 ## 📑 Sections & Structure
@@ -75,12 +104,6 @@ Few‑shot prompting works by presenting the model with a sequence of examples, 
 **Zero‑shot**
 
 ```python
-from openai import OpenAI
-client = OpenAI(base_url="http://localhost:11434/v1", 
-                api_key="ollama")
-
-llm = "deepseek-v3.2:cloud"
-
 response = client.chat.completions.create(
     model=llm,
     messages=[
@@ -198,6 +221,8 @@ except Exception as e:
 
 Structure our examples consistently, label them clearly, and sort examples by complexity (simple → complex) [[3]](https://www.pmi.org/blog/how-to-write-better-prompts-framework). A 2026 study on Few‑Shot Architecture Prompting (FSAP) systematically analysed the effect of the number of examples (n = 1, 2, 3, 4, 5, 6) and found that **3–4 well‑chosen examples** often provide the optimal trade‑off between accuracy and token cost [[4]](https://arxiv.org/abs/2512.24120v2).
 
+---
+
 ## 🧩 Chain‑of‑Thought (CoT): Teaching the Model to Reason
 
 Zero‑shot and few‑shot work well for pattern recognition, but they fail on tasks that require multi‑step reasoning. Chain‑of‑Thought (CoT) prompting solves this by explicitly instructing the model to "think step by step", or, even better, by showing it how to reason through examples.
@@ -308,7 +333,7 @@ try:
     response = client.chat.completions.create(
         model=llm,
         messages=[
-            {"role": "system", "content": "You are a Regex expert."},
+            {"role": "system", "content": "You are a regex expert."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.3
@@ -321,6 +346,7 @@ except Exception as e:
     print(f"Error occurred: {e}")
 ```
 
+---
 ## 🌳 Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT): Branching Reasoning
 
 Chain‑of‑Thought follows a single linear path. Real problem‑solving, however, often requires exploring multiple possibilities, backtracking, and synthesising insights from different branches. That is where Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT) come in.
@@ -388,7 +414,7 @@ try:
     response = client.chat.completions.create(
         model=llm,
         messages=[
-            {"role": "system", "content": "You are a Regex expert."},
+            {"role": "system", "content": "You are a regex expert."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.3
@@ -405,6 +431,8 @@ except Exception as e:
 
 Adaptive Graph of Thoughts (AGoT) dynamically decomposes problems into Directed Acyclic Graphs (DAGs) at test time, selectively expanding only necessary sub‑problems. On the "Game of 24" math puzzle, AGoT achieved a +400% improvement over baseline CoT methods [[6]](https://arxiv.org/pdf/2502.05078).
 
+---
+
 ## 🤖 Agentic Patterns: ReAct and Tool Use
 
 Once our prompts require external actions, including for running code, querying databases, calling APIs, we need an agentic pattern. The most influential is ReAct (Reasoning + Acting), which interleaves chain‑of‑thought reasoning with explicit tool calls.
@@ -415,7 +443,7 @@ In a ReAct loop, the LLM outputs:
 - Action: A tool name and arguments.
 - Observation: The result of the tool execution.
 
-<img src="/images/posts/2026-04-21-prompt-engineering-from-zero-to-sota/4-react.png" width="90%" alt="ReAct" />
+<img src="/images/posts/2026-04-21-prompt-engineering-from-zero-to-sota/4-react.png" width="70%" alt="ReAct" />
 
 This loop continues until the task is complete.
 
@@ -477,7 +505,7 @@ try:
     response = client.chat.completions.create(
         model=llm,
         messages=[
-            {"role": "system", "content": "You are a Regex generator agent."},
+            {"role": "system", "content": "You are a regex generator agent."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.3
@@ -491,6 +519,8 @@ except Exception as e:
 ```
 
 > **Note for production**: For code generation, some practitioners find that pure ReAct has a limitation where every piece of code is treated as a string inside a tool call. Alternatives such as CodeAct treat code as a first‑class action, but ReAct remains the most widely adopted pattern due to its simplicity and broad model support.
+
+---
 
 ## 🏭 Production‑Grade Techniques: Structured Outputs, Validation, and Automatic Optimisation
 
@@ -539,6 +569,8 @@ A 2026 study found that DSPy‑based declarative learning can improve factual ac
 
 Remarkably, a [Google Research paper](https://arxiv.org/abs/2512.14982) found that simply repeating the prompt twice (without increasing output length) can boost accuracy from 21% to 97% on non‑reasoning tasks [[8]](https://arxiv.org/abs/2512.14982).
 
+---
+
 ## 🚀 State‑of‑the‑Art (SOTA): What the Latest Research Says
 
 As of early 2026, the cutting edge of prompt engineering includes:
@@ -550,6 +582,8 @@ As of early 2026, the cutting edge of prompt engineering includes:
 | DSPy / GEPA                            | Declarative, compiler‑based prompt optimisation | 30–45% better factual accuracy[[7]](https://browse-export.arxiv.org/abs/2604.04869)              |
 | Confidence‑Informed Self‑Consistency | Weight reasoning paths by model confidence       | Improved consistency without extra samples[[9]](https://aclanthology.org/2025.findings-acl.1030/) |
 | UtilityMax Prompting                   | Formal mathematical task specification           | Enables multi‑objective optimisation[[10]](https://arxiv.org/abs/2603.11583)                     |
+
+---
 
 ## 🏁 Conclusion
 
