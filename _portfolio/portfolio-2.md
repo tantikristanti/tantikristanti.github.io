@@ -1,6 +1,6 @@
 ---
-title: "DESIR-CodeSprint-TrackA-TextMining"
-excerpt: "The project repository contains a workspace and a demonstrator resulting from two code sprints organized by the DESIR project. In order to promote DARIAH tools, services, and initiative collaborations, DESIR organised a series of dissemination events, one of them was the code sprint. The purpose of the code sprint 2018 & 2019 was to bring in together developers and affiliates who come not only from the DARIAH community.<br/><img src='/images/portfolio/DESIR-CodeSprint-TrackA-TextMining.png'>"
+title: "grobid-medical-report"
+excerpt: "grobid-medical-report is a [GROBID](https://github.com/kermitt2/grobid) module for extracting and restructuring medical reports from raw documents (PDF, text) into encoded documents (XML/TEI). All models built in this module are machine learning models that implement Wapiti CRF as Grobid's default models (it's possible to use deep learning models developed with [DeLFT](https://github.com/kermitt2/delft/) in Grobid as an alternative to the Wapiti CRF).<br/>GitHub repo: [grobid-medical-report](https://github.com/tantikristanti/grobid-medical-report)<br/><img src='/images/portfolio/grobid-medical-report.png'><br/>"
+
 collection: portfolio
 ---
-
