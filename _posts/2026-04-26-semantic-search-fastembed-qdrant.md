@@ -480,7 +480,6 @@ payloads = [
     }
     for _, row in df.iterrows()
 ]
-payloads
 
 ```
 
@@ -674,6 +673,11 @@ for q in queries:
   1. Le Mur des "Je t'aime" (score: 0.680)
   2. Les Escaliers de Montmartre (score: 0.678)
   3. Lac Daumesnil (score: 0.665)
+
+🔍 Query: Jazzy, cozy, fizzy pubs near Iron Tower
+  1. Lush Bar (score: 0.677)
+  2. The Bowler (score: 0.644)
+  3. Le Carillon (score: 0.642)
 ```
 
 #### 🖥️ Visualize the Results
