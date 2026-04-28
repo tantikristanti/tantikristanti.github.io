@@ -10,7 +10,6 @@ tags:
   - qdrant
   - fast-embed
 ---
-
 Traditional keyword search matches exact words. If a traveler asks for ***"quiet cafes near the Eiffel Tower"*** and our dataset contains ***"peaceful coffee shops with a view of the Iron Lady"***, keyword search returns nothing. Semantic search solves this by converting both the query and documents into mathematical vectors, dense numerical representations that capture meaning, not just tokens. It finds results that are conceptually related, even when the words don't overlap.
 
 In this guide, we'll build a production-grade semantic search engine over a Paris subset of the Tourpedia dataset, specifically focusing on points of interest (POIs) categorized as attractions [Enriched Tourism Dataset Paris (POIs)](https://data.mendeley.com/datasets/vh4g4g2322/1).
@@ -21,6 +20,18 @@ We'll learn how to:
 - Store and index vectors with [Qdrant](https://qdrant.tech/) (the open-source vector database).
 - Query semantically with cosine similarity and filtering.
 - Visualize and validate results using Qdrant's Web UI.
+
+**Why Qdrant?**
+
+Qdrant is an open-source vector search engine built in Rust. It's designed for production-scale vector search with features like:
+
+- Dense, sparse, and multi-vector support
+- Payload filtering and indexing
+- Built-in Web UI for visualization
+
+**Why FastEmbed?**
+
+FastEmbed is a CPU-optimized embedding library that uses ONNX Runtime for fast inference without heavy frameworks like PyTorch. It integrates seamlessly with Qdrant.
 
 By the end, we'll have a search system that can answer ***"romantic sunset spots along the Seine"*** and surface relevant Parisian landmarks, without ever seeing those exact words in the data.
 
@@ -134,13 +145,13 @@ Beyond FastEmbed and Qdrant, a number of powerful tools can help us build semant
 
 ### Vector Databases & Search Engines
 
-| Tool                                                      | Best For                                    | Key Features                                                          |
-| --------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------- |
-| **Qdrant** (16)                | High-scale, high-performance vector search  | Hybrid search, multitenancy, quantization, Web UI dashboard, gRPC     |
-| **Meilisearch** (17)   | Drop-in replacement for Algolia-like search | Hybrid semantic & keyword search, multi-format support, Docker-native |
-| **Marqo** (18)              | Multimodal search out-of-the-box            | LanguageBind models for video, audio, image, text search              |
+| Tool                       | Best For                                    | Key Features                                                          |
+| -------------------------- | ------------------------------------------- | --------------------------------------------------------------------- |
+| **Qdrant** (16)      | High-scale, high-performance vector search  | Hybrid search, multitenancy, quantization, Web UI dashboard, gRPC     |
+| **Meilisearch** (17) | Drop-in replacement for Algolia-like search | Hybrid semantic & keyword search, multi-format support, Docker-native |
+| **Marqo** (18)       | Multimodal search out-of-the-box            | LanguageBind models for video, audio, image, text search              |
 | **txtai** (19)       | All-in-one embeddings database              | SQL support, graph networks, RAG capabilities, multimodal indexing    |
-| **Vespa** (20) | Large-scale production search               | Hybrid retrieval, ONNX runtime, advanced ranking                      |
+| **Vespa** (20)       | Large-scale production search               | Hybrid retrieval, ONNX runtime, advanced ranking                      |
 
 ---
 
@@ -156,15 +167,17 @@ Beyond FastEmbed and Qdrant, a number of powerful tools can help us build semant
 
 ---
 
-## 🧪 Case Study – Semantic Search Over French Tourism Data
+## 🧪 Case Study: Semantic Search Over French Tourism Data
 
-Let's build something real. We'll create a semantic search engine over a French tourism (specifically using the Paris dataset) to help people discover the beauty of Paris.
+Let's build something real. We'll create a semantic search engine based on French tourism data (specifically using the Paris dataset) to help people discover the beauty of Paris.
+
+The steps in this case study are organized into sections, with the sequence of steps flowing continuously between sections to ensure clarity and ease of organization.
 
 ### 🏃 Part 1: Setup, Installation, and Data Loading
 
-#### 🐳 Run the Qdrant Container
+#### 🐳 Step 1: Setup Qdrant with Docker
 
-The fastest way to get Qdrant running is with Docker (21). Pull the official image and run it with persistent storage:
+The fastest way to get Qdrant running is with Docker (21). If you haven't already, run Qdrant locally, pull the official image and run it with persistent storage:
 
 ```bash
 # Pull the latest Qdrant image
@@ -178,6 +191,7 @@ docker run -d -p 6333:6333 -p 6334:6334 \
 
 * Port **6333** : HTTP API (for REST calls)
 * Port **6334** : gRPC API (for higher performance)
+* Web UI: http://localhost:6333/dashboard
 
 <img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/3-run-qdrant-container.png" width="70%" alt="Run Qdrant container" />
 
@@ -194,13 +208,43 @@ Qdrant includes a Web UI dashboard for visual exploration of our collections. Af
 * **Query editor** : Use autocomplete functionality to build complex queries.
 * **Interactive API console** : Execute HTTP (REST) requests directly inside the UI Test endpoints without using curl/Postman.
 
-**🚧 The Qdrant Client**
+#### 📦 Step 2: Install Required Libraries
+
+First, install Qdrant with its FastEmbed extension (22), along with data handling tools:
+
+**bash**
+
+```bash
+   pip install -q "qdrant-client[fastembed]" pandas requests
+```
+
+#### 🚧 Step 3: Import Libraries & Connect to Qdrant
+
+**Import Libraries**
+
+```python
+import requests
+import pandas as pd
+import csv
+import ast
+  
+from qdrant_client import QdrantClient, models
+from fastembed import TextEmbedding
+from requests.exceptions import RequestException
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams
+
+```
+
+**Connect to local Qdrant instance**
 
 Verify the installation by checking the version of the Qdrant REST API.
 
 ```python
-import requests
-
+# Connect to local Qdrant instance\n",
+client = QdrantClient(host="localhost", port=6333)
+  
+# Verify connection
 response = requests.get("http://localhost:6333")
 print(response.json())
 
@@ -209,23 +253,13 @@ print(response.json())
 > To perform a simple connectivity check, simply display the list of collections.
 
 ```python
-from qdrant_client import QdrantClient
-
 client = QdrantClient(host="localhost", port=6333)
 print(client.get_collections())
 ```
 
-#### 📦 Install Libraries
+### 🏃 Part 2: Data Loading
 
-First, install Qdrant with its FastEmbed extension (22), along with data handling tools:
-
-**bash**
-
-```
-pip install qdrant-client[fastembed] pandas numpy datasets
-```
-
-#### 🇫🇷 Load the Paris Tourism Dataset
+#### 🇫🇷 Step 4: Study the Dataset
 
 We'll use a real-world dataset: **"Enriched Tourism Dataset Paris (POIs)"** available on Mendeley Data (23). This dataset contains tourist reviews, destinations, and other valuable travel information well-suited for semantic search applications. It is derived from the Paris subset of the Tourpedia dataset, which focuses on points of interest (POIs) classified as attractions (available at [http://tour-pedia.org/download/paris-attraction.csv](http://tour-pedia.org/download/paris-attraction.csv)).
 
@@ -251,32 +285,7 @@ This file contains the ground truth annotations for the POIs in the previous dat
 * POI address
 * One binary column per category, where **1 indicates membership in the category** and a blank value indicates absence
 
-**📂 Load the Dataset**
-
-The CSV files we'll be using are real-world CSVs, containing irregular formatting (most likely due to commas, quotes, or line breaks within the review text). Therefore, we'll perform a little pre-processing while reading the files.
-
-```python
-import requests
-import pandas as pd
-import csv
-from requests.exceptions import RequestException
-
-url = 'https://github.com/tantikristanti/Datasets/releases/download/paris-tourism/Paris.csv'
-
-try:
-    # Load the dataset
-    df = pd.read_csv(url,
-                engine="python", # The Python engine is more tolerant of messy CSVs
-                on_bad_lines="skip", # Skip corrupted rows instead of crashing
-                quoting=csv.QUOTE_MINIMAL, # Force proper quoting handling
-                sep=";")
-    print(f"Loaded {len(df)} records")
-    print(df.head())
-except RequestException as e:
-    print(f"Error downloading file: {e}")
-```
-
-**📋 Study the Dataset Schema & Columns**
+**📋 The Dataset Schema & Columns**
 
 The primary file for our semantic search case study is  **`Paris.csv`** , containing 477 cleaned points of interest across Paris. Based on the dataset documentation, the columns include:
 
@@ -300,43 +309,71 @@ The primary file for our semantic search case study is  **`Paris.csv`** , contai
 > *Note:*
 > The dataset also includes an optional `Paris_annotated.csv` file with manual category labels for 12 predefined classes (e.g., "museum", "park", "shopping"), useful for supervised tasks.
 
-**☀️ Extract Review Text and Metadata**
+#### ❓Step 5: Choose Fields for Vector Search and Metadata
+
+We will vectorize the `name`, `address`, and `clean_reviews` columns because together they provide rich, descriptive content about each tourist point of interest in Paris. The name identifies the venue, the address adds location context, and the reviews capture visitors' experiences and opinions.
+
+In addition, we will store the `subCategory`, `name`, `address`, `lat`, `lng`, and `polarities` columns as metadata (payload). This allows us to filter points of interest for tourists, for example, to find pubs near a tourist's hotel that have good ratings. With metadata filtering, we can narrow down search results by category (subCategory), geographic proximity (lat/lng), or sentiment score (polarities), making the search more practical and personalized.
+
+<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/5-paris-dataset-dataframe.png" width="100%" alt="POI Dataset" />
+
+#### 📂 Step 6: Load the Dataset
+
+The CSV files we'll be using are real-world CSVs, containing irregular formatting (most likely due to commas, quotes, or line breaks within the review text). Therefore, we'll perform a little pre-processing while reading the files.
+
+```python
+url = 'https://github.com/tantikristanti/Datasets/releases/download/paris-tourism/Paris.csv'
+
+try:
+    # Load the dataset
+    df = pd.read_csv(url,
+                engine="python", # The Python engine is more tolerant of messy CSVs
+                on_bad_lines="skip", # Skip corrupted rows instead of crashing
+                quoting=csv.QUOTE_MINIMAL, # Force proper quoting handling
+                sep=";")
+    print(f"Loaded {len(df)} records")
+    print(df.head())
+except RequestException as e:
+    print(f"Error downloading file: {e}")
+```
+
+#### ☀️ Step 7: Extract Review Texts and Metadata
+
 The *reviews* column is a potential source of critical data, so we will now extract that information.
 
 > *Function to extract review text + metadata*
 
 ```python
 # --- Function to extract review text + metadata ---
-import ast
 def extract_reviews(data):
     if pd.isna(data):
         return "", [], []
   
     try:
         parsed = ast.literal_eval(data)  # convert string → Python object
-      
+  
         if isinstance(parsed, list):
             texts = []
             ratings = []
             polarities = []
-          
+    
             for item in parsed:
                 if isinstance(item, dict):
                     # Extract fields safely
                     text = item.get("text", "")
                     rating = item.get("rating", None)
                     polarity = item.get("polarity", None)
-                  
+            
                     if text:
                         texts.append(text)
                     if rating is not None:
                         ratings.append(rating)
                     if polarity is not None:
                         polarities.append(polarity)
-          
+    
             # Combine all review texts into one string
             combined_text = " ".join(texts)
-          
+    
             return combined_text, ratings, polarities
   
     except Exception:
@@ -344,6 +381,7 @@ def extract_reviews(data):
 
     # fallback if parsing fails
     return str(data), [], []
+
 ```
 
 > *Apply extraction*
@@ -354,22 +392,20 @@ df[["clean_reviews", "ratings", "polarities"]] = df["reviews"].apply(
     lambda x: pd.Series(extract_reviews(x))
 )
 
-# Keep only useful column for IR
-reviews_df = df[["clean_reviews"]]
+# Optional: Add a scalar rating for filtering
+df['avg_polarity'] = df['polarities'].apply(lambda x: sum(x)/len(x) if x else 0)
 
-print(reviews_df.head())
+df[["clean_reviews", "ratings", "polarities", "avg_polarity"]].head()
 
+# Save to file (optional)
+#df.to_csv("data/clean_reviews.csv", index=False)
 ```
 
-**❓Which Fields Could Be Used for Semantic Search and Metadata**
+<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/6-extract-reviews-polarities.png" width="100%" alt="Extract reviews, polarities" />
 
-For our semantic index, we will primarily vectorize the  `name`, `address`, and `clean_reviews` columns. The remaining columns (`id`, `subCategory`, `lat`, `lng`, and `polarities`) will be stored as ***payload metadata***. This allows us to filter or retrieve these attributes alongside our search results.
+### 📙 Part 3: Embedding, Indexing, and Basic Search (Core pipeline)
 
-<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/5-paris-dataset-dataframe.png" width="100%" alt="Semantic search results, Qdrant Web UI" />
-
-### 📙 Part 2: Embedding, Indexing, and Basic Search (Core pipeline)
-
-#### ☑️ Embedding Model Selection
+#### ☑️ Step 8: Choose Embedding Model
 
 Now we know that we’re working with English text, the next step is to select an appropriate embedding model to convert this content into vector representations (24).
 
@@ -380,13 +416,25 @@ In practice, the most reliable approach is to experiment with multiple models an
 In this guide, we will use FastEmbed as the embedding provider. FastEmbed is an embedding solution tailored for use with Qdrant. It is designed for low-latency, CPU-efficient embedding generation.
 
 ```python
-from fastembed import TextEmbedding
+# Verify available models
 print(TextEmbedding.list_supported_models())
 ```
 
-<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/6-list-fastembed-models.png" width="90%" alt="FastEmbed Models" />
+<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/7-list-fastembed-models.png" width="90%" alt="FastEmbed Models" />
 
-Based on the criteria mentioned, this model will be used:
+Our model selection was guided by several criteria. We need a model that:
+
+- Works with *English* text (our dataset).
+- Is *unimodal* (no image support needed; better performance for text-only).
+- Produces *small-to-moderate* dimensions (384–512) to fit in memory.
+- Is *CPU-optimized* (local inference).
+
+Based on the criteria mentioned, we will use the `BAAI/bge-small-en-v1.5` model:
+
+- Dimension: 384.
+- Size: ~0.13 GB.
+- Optimized for cosine similarity.
+- Supports query/document prefixes (not strictly required but can improve retrieval).
 
 ```json
 {'model': 'BAAI/bge-small-en',
@@ -402,7 +450,7 @@ Based on the criteria mentioned, this model will be used:
   'tasks': {}}
 ```
 
-#### 🗂️ Creating a Qdrant Collection
+#### 🗂️ Step 9: Create a Qdrant Collection
 
 Before indexing, we need a  **collection** to store our vectors (it's like a table in a database). To create a collection in Qdrant, the essential configuration requires:
 
@@ -414,11 +462,6 @@ Before indexing, we need a  **collection** to store our vectors (it's like a tab
 While Qdrant supports advanced [configuration](https://qdrant.tech/documentation/manage-data/collections/#create-a-collection), including alternative vector types for use cases like hybrid search, this example uses a simple default setup suitable for typical dense embeddings.
 
 ```python
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams
-
-client = QdrantClient(host="localhost", port=6333)
-
 collection_name = "french_tourism"
 
 # Check if collection exists
@@ -436,54 +479,54 @@ if collection_name not in collection_names:
     print(f"Collection '{collection_name}' created ✅")
 else:
     print(f"Collection '{collection_name}' already exists 👍")
+
 ```
 
-#### 📝 Creating Data Points and Indexing
+#### 📝 Step 10: Generate Embeddings & Insert Points
 
-Now we'll convert our text reviews into embeddings using FastEmbed and store them as "points" in Qdrant.
+> ***Generate Embeddings***
 
-***Generate Embeddings using the Embedding Model***
+We'll vectorize the `name`, `address`, and `clean_reviews` columns into embeddings using FastEmbed and store them as "points" in Qdrant. The aim is to embed information about a place and also reviews from tourists about a particular tourist point of interest.
 
 ```python
-from fastembed import TextEmbedding
-from qdrant_client import models
-
-# Initialize the embedding model
-embedding_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
-
 # Prepare documents: combine destination name + review text for richer context
 documents = [
     f"Destination: {row['name']}, Address: {row['address']}. Review: {row['clean_reviews']}"
     for _, row in df.iterrows()
 ]
 
+# Initialize the embedding model
+embedding_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+
 # Generate embeddings in batches
 print("Generating embeddings...")
 embeddings = list(embedding_model.embed(documents))
+
 ```
 
-***Create Payloads***
+> ***Prepare Payloads***
+
+In addition, we will use the `subCategory`, `name`, `address`, `lat`, `lng`, `polarities`, `reviews`, and `avg_polarity` columns as metadata. This allows us to apply filters to tourist points of interest, for example, finding pubs near a hotel that have strong ratings.
 
 ```python
-# Create payloads (for metadata filtering)
-
+# Create payloads (metadata for filtering)
 payloads = [
     {
-        "destination_id": str(row["id"]),
-        "category": row["subCategory"],
-        "destination_name": row["name"],
+        "subCategory": row["subCategory"],
+        "name": row["name"],
         "address": row["address"],
-        "latitude": row["lat"],
-        "longitude": row["lng"],
-        "rating": row["polarities"],
-        "review_text": row["clean_reviews"]
+        "lat": row["lat"],
+        "lng": row["lng"],
+        "polarities": row["polarities"],
+        "reviews": row["clean_reviews"],
+        "avg_polarity": row["avg_polarity"],
     }
     for _, row in df.iterrows()
 ]
 
 ```
 
-***Create Points***
+> ***Create Points***
 
 Points are the core data entities in Qdrant. Each point consists of:
 
@@ -493,7 +536,6 @@ Points are the core data entities in Qdrant. Each point consists of:
 
 ```python
 # Create points 
-
 points = [
     models.PointStruct(
         id=idx,
@@ -502,9 +544,12 @@ points = [
     )
     for idx, (embedding, payload) in enumerate(zip(embeddings, payloads))
 ]
+
 ```
 
-***Upsert Generated Points into the Collection***
+***Insert Generated Points into the Collection***
+
+For production, use `upload_points()` for large datasets. Here we use `upsert()` for simplicity.
 
 ```python
 # Upsert generated points into the collection
@@ -516,12 +561,13 @@ client.upsert(
 print(f"Indexed {len(points)} points successfully!")
 ```
 
-***⭐️ Count the Points in the Collection***
+#### ⭐️ Step 11: Verify Collection
+
+> ***Count the Points in the Collection***
 
 Let's verify our data was inserted correctly.
 
 ```python
-
 collection_info = client.get_collection(collection_name)
 print(f"Collection contains {collection_info.points_count} points")
 print(f"Vector size: {collection_info.config.params.vectors.size}")
@@ -537,36 +583,47 @@ Vector size: 384
 Distance metric: Cosine
 ```
 
-### 🧪 Part 3: Similarity Search and Visualization
+### 🧪 Part 4: Similarity Search and Visualization
 
-#### 🆎 Semantic Search without Filters
+#### 🆎 Step 12: Semantic Search without Any Payload Filtering
 
-Let's query with ***"peaceful coffee shops with a view of the Eiffel Tower"***.
+Let's perform vector search without any payload filtering using the query ***"peaceful coffee shops with a view of the Eiffel Tower"***.
 
 ```python
 def semantic_search(query, limit=5, filter_category=None):
     """
-    Perform semantic search without filtering
+    Perform semantic search without any payload filtering
+    Args:
+        query (str): User's natural language query
+        limit (int): Number of results to return
+    Returns:
+        list of ScoredPoint objects with score and payload
     """
-    query_embedding = next(embedding_model.embed([query])) # Embed the user queryusing the same model
 
+    # 1. Convert query to embedding (generator -> next() gives first vector)
+    query_embedding = next(embedding_model.embed([query])) 
+  
+    # 2. Search in Qdrant
     results = client.query_points(
         collection_name=collection_name,
-        query=query_embedding.tolist(),
-        limit=limit
+        query=query_embedding.tolist(),  # Pass vector directly
+        limit=limit,
+        with_payload=True  # Include metadata in results
     ).points
 
     return results
 
 # Query with a semantic search
+# Example: Find peaceful coffee shops with a view
 query = "peaceful coffee shops with a view of the Eiffel Tower"
 results = semantic_search(query, limit=3)
 
 for result in results:
     print(f"Score: {result.score:.4f}")
-    print(f"Destination: {result.payload.get('destination_name')}")
-    print(f"Rating: {result.payload.get('rating')}")
-    print(f"Review snippet: {result.payload.get('review_text', '')[:100]}...")
+    print(f"Destination: {result.payload.get('name')}")
+    print(f"Address: {result.payload.get('address')}")
+    print(f"Rating: {result.payload.get('avg_polarity')}")
+    print(f"Review snippet: {result.payload.get('reviews', '')[:100]}...")
     print("-" * 50)
 
 ```
@@ -574,135 +631,163 @@ for result in results:
 > Sample results:
 
 ```bash
+
 Score: 0.7389
 Destination: L'Adada Bar
-Rating: [10]
-Review snippet: Nice atmosphere, calm, nice people, awesome photo booth for only 2 euros, reasonably priced...
+Address: 15 Rue du Maine
+Rating: 10.0
+Review snippet: Nice atmosphere, calm, nice people, awesome photobooth for only 2 euros, reasonably priced...
 --------------------------------------------------
 Score: 0.7226
 Destination: Palais Royal
-Rating: [5, 10, 5, 9, 0]
+Address: Place du Palais Royal
+Rating: 5.8
 Review snippet: Nice place to start any kind of touristic running session. Beautiful garden, amazing window shopping...
 --------------------------------------------------
 Score: 0.7170
 Destination: Quai d'Orsay - Voie sur Berge
-Rating: [5]
+Address: Quai d'Orsay
+Rating: 5.0
 Review snippet: Nice pedestrian area along the river with some great cafes. Perfect place to get out of the sun and ...
 --------------------------------------------------
-Score: 0.7139
-Destination: Jardin du Palais Royal
-Rating: [10, 5, 10, 5, 5, 10, 10, 5, 10]
-Review snippet: Lovely in summer O temps, suspend ton vol ! Un endroit caché et calme pour s'attendrir. A hidden gem...
---------------------------------------------------
-Score: 0.7111
-Destination: Rue Michel-ange
-Rating: [10]
-Review snippet: Great Paris neighborhood, fantastic cafes and awesome Saturday market....
---------------------------------------------------
+
 ```
 
-#### 🔡 Semantic Search with Filters
+#### 🔡 Step 13: Semantic Search with Payload Filtering
+
+Filtering allows narrowing results based on metadata. Common filter types:
+
+- `MatchValue`: exact match on a string or number.
+- `Range`:  numeric/date range (e.g., `gte`, `lte`).
+- `MatchAny`: list of possible values.
+
+> **Note:** Since `polarities` is a list, we use `avg_polarity` (scalar) for rating-based filtering.
+
 Let's validate our semantic search system and test it with both known and novel queries.
 
 ```python
-def semantic_search_filters(query, limit=5, filter_category=None):
-    """
-    Perform semantic search with optional filtering
-    """
+def semantic_search_with_filters(query, limit=5, min_rating=None, category=None):
+    # Vector search with optional filters on avg_polarity and subCategory.
     query_embedding = next(embedding_model.embed([query]))
-
-    # Build filter if needed
-    search_filter = None
-    if filter_category:
-        search_filter = models.Filter(
-            must=[
-                models.FieldCondition(
-                    key="category",
-                    match=models.MatchValue(value=filter_category)
-                )
-            ]
-        )
-
-    results = client.query_points(
-        collection_name=collection_name,
-        query=query_embedding.tolist(),
-        limit=limit,
-        query_filter=search_filter
-    ).points
-
+    # Build filter conditions
+    must_conditions = []
+    if min_rating is not None:
+        must_conditions.append(models.FieldCondition(
+                                key="avg_polarity",
+                                range=models.Range(gte=min_rating))) # gte: greater than or equal ( >= )
+    if category is not None:
+        must_conditions.append(models.FieldCondition(
+                                key="subCategory",
+                                match=models.MatchValue(value=category)))
+    search_filter = models.Filter(must=must_conditions) if must_conditions else None
+    results = client.query_points(collection_name=collection_name,
+                                query=query_embedding.tolist(),
+                                limit=limit,          
+                                query_filter=search_filter,
+                                with_payload=True
+                                ).points
     return results
+```
 
-# Test with both known and novel queries
-queries = [
-    "Where can I find beautiful castles?",
-    "Top rated restaurants in coastal towns",
-    "Family-friendly hiking trails",
-    "Places with amazing sunset views",
-    "Romantic getaways for couples",
-    "Jazzy, cozy, fizzy pubs near Iron Tower"
-]
+> 🍷 🧀 Let's query with "Good wine and cheese".
 
-for q in queries:
-    print(f"\n🔍 Query: {q}")
-    results = semantic_search_filters(q, limit=3)
-    for i, r in enumerate(results, 1):
-        print(f"  {i}. {r.payload['destination_name']} (score: {r.score:.3f})")
+```python
+# Example 1: Find a highly-rated Bars (avg polarity >= 7)
+query = "Good wine and cheese"
+results = semantic_search_with_filters(query, limit=3, min_rating=7.0, category="Bar")
+print(f"Filtered results for '{query}':")
+for result in results:
+    print(f"{result.payload['name']} (avg rating: {result.payload['avg_polarity']:.1f}) | Score: {result.score:.4f}")
 ```
 
 > Sample results:
 
 ```bash
-🔍 Query: Where can I find beautiful castles?
-  1. Bagatelle Mansion (score: 0.628)
-  2. Quai de la Tournelle (score: 0.613)
-  3. Place Saint-Ferdinand (score: 0.611)
-
-🔍 Query: Top rated restaurants in coastal towns
-  1. Le Vin Cœur (score: 0.670)
-  2. Chai 33 (score: 0.668)
-  3. La Cave Café (score: 0.663)
-
-🔍 Query: Family-friendly hiking trails
-  1. Parc Avenue Foch (score: 0.594)
-  2. Quai de la Tournelle (score: 0.588)
-  3. Lac Inférieur (score: 0.587)
-
-🔍 Query: Places with amazing sunset views
-  1. Quai d'Orsay - Voie sur Berge (score: 0.671)
-  2. Le Mur des "Je t'aime" (score: 0.659)
-  3. Quai de la Tournelle (score: 0.659)
-
-🔍 Query: Romantic getaways for couples
-  1. Le Mur des "Je t'aime" (score: 0.680)
-  2. Les Escaliers de Montmartre (score: 0.678)
-  3. Lac Daumesnil (score: 0.665)
-
-🔍 Query: Jazzy, cozy, fizzy pubs near Iron Tower
-  1. Lush Bar (score: 0.677)
-  2. The Bowler (score: 0.644)
-  3. Le Carillon (score: 0.642)
+Filtered results for 'Good wine and cheese':
+Le Vin Cœur (avg rating: 8.3) | Score: 0.7468
+Café A (avg rating: 10.0) | Score: 0.7061
+Le Passy (avg rating: 8.5) | Score: 0.7050
 ```
 
-#### 🖥️ Visualize the Results
+> 🎆 Let's find several highly-rated lounges.
+
+```python
+# Example 2: Find several highly-rated lounges (avg polarity >= 6)
+queries = [
+    "Romantic sunset spots along the Seine",
+    "Family friendly hangout",
+    "Romantic getaways for couples",
+    "Jazzy, cozy, fizzy meeting point near Iron Tower",
+]
+
+for q in queries:
+    print(f"\n🔍 Query: {q}")
+    results = semantic_search_with_filters(q, limit=3, min_rating=6.0, category="Lounge")
+    for i, r in enumerate(results, 1):
+        print(f"  {i}. {r.payload['name']} (score: {r.score:.3f})")
+
+```
+
+> Sample results:
+
+```bash
+🔍 Query: Romantic sunset spots along the Seine
+  1. La Piscine Saint Louis (score: 0.670)
+  2. Le Nüba (score: 0.659)
+  3. Workshop Paris (score: 0.652)
+
+🔍 Query: Family friendly hangout
+  1. Café Barge (score: 0.636)
+  2. Tiny Café (score: 0.619)
+  3. Workshop Paris (score: 0.617)
+
+🔍 Query: Romantic getaways for couples
+  1. La Piscine Saint Louis (score: 0.619)
+  2. Workshop Paris (score: 0.609)
+  3. Café Barge (score: 0.594)
+
+🔍 Query: Jazzy, cozy, fizzy meeting point near Iron Tower
+  1. Tiny Café (score: 0.630)
+  2. Café Barge (score: 0.613)
+  3. L'Inconnu (score: 0.585)
+  
+```
+
+#### 🖥️ Step 14: Visualize the Results
+
+Qdrant provides a built-in visualization tool for exploring our points.
 
 1. Open the Web UI: http://localhost:6333/dashboard
-
 2. Select the collection (left sidebar): **french_tourism**
-
 3. Go to the "Visualize" menu.
-
 4. Run with the desired payload and number of nodes.
 
 ```json
 {
   "limit": 500,
   "color_by": {
-    "payload": "address"
+    "payload": "subCategory"
     }
 }
 ```
 
-<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/7-qdrant-web-ui-results.png" width="100%" alt="Semantic search results, Qdrant Web UI" />
+This applies dimensionality reduction (e.g., UMAP, t-SNE) to project 384-dim vectors into 2D, colored by POI type. We'll see clusters of semantically similar places based on the sub-category (e.g., pubs, lounges, parks).
+
+<img src="/images/posts/2026-04-26-semantic-search-fastembed-qdrant/8-qdrant-web-ui-results.png" width="100%" alt="Semantic search results, Qdrant Web UI" />
+
+#### 📸 Step 15: Best Practices & Next Steps
+
+***Performance Tips***
+
+- **Batch upload**: For >10k points, use `client.upload_points()` (handles lazy batching, retries, parallelism).
+- **Index payload fields**: If you filter frequently (e.g., `subCategory`), create a payload index to speed up queries.
+- **Limit search results**: Keep `limit` between 10–100; use `score_threshold` to exclude low-quality matches.
+
+ ***Potential Improvements for This Dataset***
+
+- **Geographic search**: Qdrant supports geo-radius filtering (`geo_radius` on `lat`/`lng`) payload.
+- **Hybrid search**: Combine dense (semantic) + sparse (BM25) for better keyword matching on proper nouns.
+- **Reranking**: Use a cross-encoder to reorder top-k results for higher precision.
 
 ---
 
@@ -713,20 +798,17 @@ As we wrap up our journey from keyword matching to meaning‑driven discovery, h
 * ✅ **Semantic search bridges the gap between human intent and exact keywords**
 
   - By converting text into dense vectors with FastEmbed, we transformed a raw Paris tourism dataset into an intelligent discovery engine.
-
 * ✅ **FastEmbed + Qdrant provide a production-ready, lightweight stack**
 
   - FastEmbed's ONNX-powered inference delivers speed and low dependencies, while Qdrant handles billions of vectors with cosine similarity, filtering, and hybrid search; all accessible via a clean Python API and a visual Web UI.
-
 * ✅ **Real data makes the difference**
 
   - Using the Mendeley French tourism dataset, we built, indexed, and queried a semantic search system in under 100 lines of code. The results speak for themselves: queries return meaning‑matched destinations, not just token overlaps.
-
 * ✅ **State‑of‑the‑art is within reach**
 
   - With models like Microsoft Harrier, Qwen3, and Gemini Embedding 2 topping the MTEB leaderboard, and hybrid retrieval becoming the baseline, we can continuously upgrade our search quality without rewriting our infrastructure.
-
 * ✅ **Our next step: go hybrid and multimodal**
+
   - Extend the similarity search with hybrid techniques.
   - Extend this blog's case study by adding image embeddings (CLIP/LanguageBind) or audio/video search. Qdrant's multi‑vector and payload filtering make it easy to scale from text-only to rich, cross‑modal discovery.
 
@@ -756,7 +838,7 @@ As we wrap up our journey from keyword matching to meaning‑driven discovery, h
 20. Vespa. **Vespa**. (2026). https://github.com/vespa-engine/vespa.
 21. Qdrant. (2026). **How to Get Started with Qdrant Locally**. (https://qdrant.tech/documentation/quickstart/).
 22. Qdrant. **FastEmbed**. (2026). https://qdrant.github.io/fastembed/?trk=public_post_comment-text.
-23. Hermoso, Ramon , Sergio Ilarri, and Raquel Trillo-Lado. (October 30, 2024). **Enriched Tourism Dataset Paris**. https://data.mendeley.com/datasets/vh4g4g2322/1.
+23. Hermoso, Ramon , Ilarri, Sergio, and Trillo-Lado, Raquel. (October 30, 2024). **Enriched Tourism Dataset Paris**. Mendeley Data, V1, doi: 10.17632/vh4g4g2322.1. https://data.mendeley.com/datasets/vh4g4g2322/1.
 24. DataTalksClub. (2026). **Vector Search with Qdrant**. https://github.com/DataTalksClub/llm-zoomcamp/blob/main/02-vector-search/sematic_search.ipynb.
 
 ---
