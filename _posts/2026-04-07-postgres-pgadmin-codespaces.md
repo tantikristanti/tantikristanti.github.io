@@ -15,7 +15,7 @@ Setting up and running a database development environment shouldn't be a project
 
 ## What is GitHub Codespaces?
 
-In this guide, we will run two containers in a [GitHub codespaces](https://docs.github.com/en/codespaces) environment with the following architecture inspired by the work of [DataTalks Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main).
+In this guide, we will run two containers in a GitHub codespaces ([1]) environment with the following architecture ([2]).
 
 ![alt text](/images/posts/2026-04-07-postgres-pgadmin-codespaces/1-container-architecture.png "Container Architecture")
 
@@ -44,7 +44,7 @@ For personal use, GitHub Codespaces includes a monthly free tier with every GitH
 
 ### Step 1: Launch the Cloud Development Environment
 
-Before configuring our database, we need to set up GitHub Codespaces, which provides a cloud-based development environment with tools like [Python](https://www.python.org/) and [Docker](https://docs.docker.com/) pre-installed.
+Before configuring our database, we need to set up GitHub Codespaces, which provides a cloud-based development environment with tools like Python ([3]) and Docker ([4]) pre-installed.
 
 Here’s how to get started:
 
@@ -94,7 +94,7 @@ You should see output confirming that both Python and Docker are installed and a
 
 ## Create .env File
 
-[PostgreSQL]((https://www.postgresql.org/)) and [pgAdmin](https://www.pgadmin.org/) will be run as Docker containers, with connection credentials sourced from a `.env` file as follows:
+PostgreSQL ([5]) and pgAdmin ([6]) will be run as Docker containers, with connection credentials sourced from a `.env` file as follows:
 
 ```bash
 # PostgreSQL environment variables for Docker Compose
@@ -365,9 +365,18 @@ We’ve successfully transformed a traditionally complex local setup into a port
 
 ## References
 
-1. DataTalksClub. (2026). [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main).
-2. Docker Inc. (2026). [Docker Docs](https://docs.docker.com/).
-3. GitHub Codespaces. (2026). [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces).
-4. pgAdmin Development Team. (2026). [pgAdmin](https://www.pgadmin.org/).
-5. Python Software Foundation. (2026). [Python](https://www.python.org/).
-6. The PostgreSQL Global Development Group. (2026). [PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database](https://www.postgresql.org/).
+1. GitHub Codespaces. (2026). **GitHub Codespaces Documentation**.
+2. DataTalksClub. (2026). **DataTalksClub Data Engineering Zoomcamp Repository**.
+3. Python Software Foundation. (2026). **Python**.
+4. Docker Inc. (2026). **Docker Documentation**.
+5. The PostgreSQL Global Development Group. (2026). **PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database**.
+6. pgAdmin Development Team. (2026). **pgAdmin**.
+
+---
+
+[1]: https://docs.github.com/en/codespaces
+[2]: https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main)
+[3]: https://www.python.org/
+[4]: https://docs.docker.com/
+[5]: https://www.postgresql.org/
+[6]: https://www.pgadmin.org/

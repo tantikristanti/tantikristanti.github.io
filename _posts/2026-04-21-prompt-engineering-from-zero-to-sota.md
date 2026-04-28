@@ -27,9 +27,10 @@ To follow this guide, you should have:
 
 ### Initialize the Conversation Client and LLM
 
-All code examples in this blog assume you have a client and an llm variable defined as shown below. 
+All code examples in this blog assume you have a client and an llm variable defined as shown below.
 
 **OpenAI API**
+
 ```python
 import os
 from openai import OpenAI
@@ -78,7 +79,7 @@ Each section includes examples in Python or regex. The following diagram summari
 
 At its core, prompt engineering is the practice of designing, structuring, and optimising the input you give to an LLM to elicit the most useful, accurate, and reliable response.
 
-In 2026, the field has matured into a formal discipline. A comprehensive taxonomy from Renmin University and Microsoft AI [[1]](https://link.springer.com/content/pdf/10.1007/s11704-025-50058-z.pdf) categorises prompt engineering across four pillars:
+In 2026, the field has matured into a formal discipline. A comprehensive taxonomy from Renmin University and Microsoft AI ([1]) categorises prompt engineering across four pillars:
 
 1. **Profile and Instruction**: defines the AI’s role and task requirements (e.g., acting as a medical expert).
 2. **Knowledge**: integrates real‑time data retrieval to combat misinformation.
@@ -91,7 +92,7 @@ For developers, this means moving beyond single‑shot "write code" prompts towa
 
 ## 🎯 Zero‑Shot, One‑Shot, and Few‑Shot Prompting
 
-The simplest and most widely used category of prompting is *in‑context learning*: giving the model examples of the desired behaviour directly inside the prompt. The number of examples determines the name [[2]](https://www.digitalocean.com/community/tutorials/_few-shot-prompting-techniques-examples-best-practices):
+The simplest and most widely used category of prompting is *in‑context learning*: giving the model examples of the desired behaviour directly inside the prompt. The number of examples determines the name ([2]):
 
 1. **Zero‑shot**: no examples, only instructions.
 2. **One‑shot**: a single example.
@@ -219,7 +220,7 @@ except Exception as e:
 
 ### 💡 Best Practice for Few‑Shot
 
-Structure our examples consistently, label them clearly, and sort examples by complexity (simple → complex) [[3]](https://www.pmi.org/blog/how-to-write-better-prompts-framework). A 2026 study on Few‑Shot Architecture Prompting (FSAP) systematically analysed the effect of the number of examples (n = 1, 2, 3, 4, 5, 6) and found that **3–4 well‑chosen examples** often provide the optimal trade‑off between accuracy and token cost [[4]](https://arxiv.org/abs/2512.24120v2).
+Structure our examples consistently, label them clearly, and sort examples by complexity (simple → complex) ([3]). A 2026 study on Few‑Shot Architecture Prompting (FSAP) systematically analysed the effect of the number of examples (n = 1, 2, 3, 4, 5, 6) and found that **3–4 well‑chosen examples** often provide the optimal trade‑off between accuracy and token cost ([4]).
 
 ---
 
@@ -347,12 +348,13 @@ except Exception as e:
 ```
 
 ---
+
 ## 🌳 Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT): Branching Reasoning
 
 Chain‑of‑Thought follows a single linear path. Real problem‑solving, however, often requires exploring multiple possibilities, backtracking, and synthesising insights from different branches. That is where Tree‑of‑Thoughts (ToT) and Graph‑of‑Thoughts (GoT) come in.
 
 - **Tree‑of‑Thoughts (ToT)** encourages the LLM to generate multiple reasoning paths simultaneously, evaluate each one, and select the most promising branch to develop further, much like a human brainstorming alternative solutions.
-- **Graph‑of‑Thoughts (GoT)** goes even further, representing reasoning as a graph where thoughts can be merged, looped, and combined non‑linearly. In complex financial reasoning tasks, GoT has been shown to achieve 15–25% higher accuracy than baseline methods while reducing hallucination rates by 25–30% [[5]](https://labs.sciety.org/articles/by?article_doi=10.20944/preprints202507.0553.v1).
+- **Graph‑of‑Thoughts (GoT)** goes even further, representing reasoning as a graph where thoughts can be merged, looped, and combined non‑linearly. In complex financial reasoning tasks, GoT has been shown to achieve 15–25% higher accuracy than baseline methods while reducing hallucination rates by 25–30% ([5]).
 
 ### 🌲 Python Example: Optimising a Recursive Function
 
@@ -429,7 +431,7 @@ except Exception as e:
 
 ### 📊 Adaptive Graph of Thoughts (AGoT)
 
-Adaptive Graph of Thoughts (AGoT) dynamically decomposes problems into Directed Acyclic Graphs (DAGs) at test time, selectively expanding only necessary sub‑problems. On the "Game of 24" math puzzle, AGoT achieved a +400% improvement over baseline CoT methods [[6]](https://arxiv.org/pdf/2502.05078).
+Adaptive Graph of Thoughts (AGoT) dynamically decomposes problems into Directed Acyclic Graphs (DAGs) at test time, selectively expanding only necessary sub‑problems. On the "Game of 24" math puzzle, AGoT achieved a +400% improvement over baseline CoT methods ([6]).
 
 ---
 
@@ -563,11 +565,11 @@ Manual prompt tweaking is tedious and non‑scalable. The new wave of automatic 
 - **GEPA** (Generalized Error‑driven Prompt Augmentation) iteratively proposes new prompt variants based on error patterns, achieving significant gains on mathematical reasoning tasks.
 - **OPRO** (Optimization by PROmpting) from Google DeepMind uses the LLM itself as an optimiser, iteratively refining prompts based on past performance.
 
-A 2026 study found that DSPy‑based declarative learning can improve factual accuracy by 30–45% while reducing hallucinations by approximately 25% [[7]](https://browse-export.arxiv.org/abs/2604.04869).
+A 2026 study found that DSPy‑based declarative learning can improve factual accuracy by 30–45% while reducing hallucinations by approximately 25% ([7]).
 
 ### 🧪 Simple But Powerful: Prompt Repetition
 
-Remarkably, a [Google Research paper](https://arxiv.org/abs/2512.14982) found that simply repeating the prompt twice (without increasing output length) can boost accuracy from 21% to 97% on non‑reasoning tasks [[8]](https://arxiv.org/abs/2512.14982).
+Remarkably, a [Google Research paper](https://arxiv.org/abs/2512.14982) found that simply repeating the prompt twice (without increasing output length) can boost accuracy from 21% to 97% on non‑reasoning tasks ([8]).
 
 ---
 
@@ -575,13 +577,13 @@ Remarkably, a [Google Research paper](https://arxiv.org/abs/2512.14982) found th
 
 As of early 2026, the cutting edge of prompt engineering includes:
 
-| Technique                              | Key Idea                                         | Performance Gain                                                                               |
-| -------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Graph‑of‑Thoughts (GoT)              | Graph‑based reasoning with merging and loops    | 15–25% accuracy improvement, 25–30% fewer hallucinations [[5]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5339795)                                 |
-| Adaptive GoT                           | Dynamically builds DAGs at test time             | +46.2% on GPQA Diamond, +400% on Game of 24[[6]](https://arxiv.org/pdf/2502.05078)                |
-| DSPy / GEPA                            | Declarative, compiler‑based prompt optimisation | 30–45% better factual accuracy[[7]](https://browse-export.arxiv.org/abs/2604.04869)              |
-| Confidence‑Informed Self‑Consistency | Weight reasoning paths by model confidence       | Improved consistency without extra samples[[9]](https://aclanthology.org/2025.findings-acl.1030/) |
-| UtilityMax Prompting                   | Formal mathematical task specification           | Enables multi‑objective optimisation[[10]](https://arxiv.org/abs/2603.11583)                     |
+| Technique                              | Key Idea                                         | Performance Gain                                                                                                                 |
+| -------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Graph‑of‑Thoughts (GoT)              | Graph‑based reasoning with merging and loops    | 15–25% accuracy improvement, 25–30% fewer hallucinations ([5]) |
+| Adaptive GoT                           | Dynamically builds DAGs at test time             | +46.2% on GPQA Diamond, +400% on Game of 24 ([6]) |
+| DSPy / GEPA                            | Declarative, compiler‑based prompt optimisation | 30–45% better factual accuracy ([7]) |
+| Confidence‑Informed Self‑Consistency | Weight reasoning paths by model confidence       | Improved consistency without extra samples ([9]) |
+| UtilityMax Prompting                   | Formal mathematical task specification           | Enables multi‑objective optimisation ([10])                                                |
 
 ---
 
@@ -609,3 +611,16 @@ Prompt engineering in 2026 is no longer about finding "magic words". It is a str
 8. Leviathan, Y., Kalman, M., & Matias, Y. (2025). **Prompt Repetition Improves Non-Reasoning LLMs**. arXiv preprint arXiv:2512.14982. https://arxiv.org/abs/2512.14982
 9. Taubenfeld, A., Sheffer, T., Ofek, E., Feder, A., Goldstein, A., Gekhman, Z., & Yona, G. (2025, July). **Confidence improves self-consistency in llms**. In Findings of the Association for Computational Linguistics: ACL 2025 (pp. 20090-20111). https://aclanthology.org/2025.findings-acl.1030/
 10. Marom, O. (2026). **UtilityMax Prompting: A Formal Framework for Multi-Objective Large Language Model Optimization**. arXiv preprint arXiv:2603.11583. https://arxiv.org/abs/2603.11583
+
+---
+
+[1]: https://link.springer.com/content/pdf/10.1007/s11704-025-50058-z.pdf
+[2]: https://www.digitalocean.com/community/tutorials/_few-shot-prompting-techniques-examples-best-practices
+[3]: https://www.pmi.org/blog/how-to-write-better-prompts-framework
+[4]: https://arxiv.org/abs/2512.24120v2
+[5]: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5339795
+[6]: https://arxiv.org/pdf/2502.05078
+[7]: https://browse-export.arxiv.org/abs/2604.04869
+[8]: https://arxiv.org/abs/2512.14982
+[9]: https://aclanthology.org/2025.findings-acl.1030/
+[10]: https://arxiv.org/abs/2603.11583

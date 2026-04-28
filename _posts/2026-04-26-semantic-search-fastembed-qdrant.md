@@ -843,9 +843,6 @@ As we wrap up our journey from keyword matching to meaning‑driven discovery, h
 
 ---
 
-## 🕸 Links
-
-
 [1]: https://link.springer.com/chapter/10.1007/978-3-032-16451-3_26
 [2]: https://atlan.com/know/semantic-search-vs-keyword-search/#3-what-are-the-disadvantages-of-semantic-search
 [3]: https://www.couchbase.com/blog/semantic-search-vs-keyword-search-whats-the-difference/

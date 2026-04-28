@@ -32,8 +32,8 @@ This guide assumes you've already completed the foundational setup from our comp
 
 **What the setup provides:**
 
-- ✅ A running [GitHub Codespace](https://docs.github.com/en/codespaces).
-- ✅ [Docker](https://docs.docker.com/) containers for [PostgreSQL](https://www.postgresql.org/) and [pgAdmin](https://www.pgadmin.org/).
+- ✅ A running GitHub Codespace ([1]).
+- ✅ Docker ([2]) containers for PostgreSQL ([3]) and pgAdmin ([4]).
 - ✅ pgAdmin configured with server connection.
 - ✅ Configured `.env` file with credentials. We will update the file slightly to change the database name as follows:
 
@@ -85,11 +85,11 @@ If any step fails, **return to [the companion tutorial](https://tantikristanti.g
 
 ## About This Guide's Structure
 
-Now that your environment is ready, this guide will shift focus to **building the data pipeline**. The following architecture outlines the general flow we will implement:
+Now that your environment is ready, this guide will shift focus to **building the data pipeline**. The following architecture outlines the general flow we will implement ([5]):
 
 ![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/3-system-architecture.png "System Architecture")
 
-The system architecture inspired by the work of [DataTalks Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main) consists of three core services running in containers:
+The system architecture consists of three core services running in containers:
 
 * **Postgres:** The primary relational database for structured data storage.
 * **pgAdmin:** A web-based interface for database administration and analysis, enabling direct SQL query execution and exploration of the ingested data.
@@ -113,7 +113,7 @@ While the original data is stored in PARQUET format, for this project it has bee
 
 ## Create a Virtual Environment with UV
 
-Virtual environments create isolated, project-specific spaces for [Python](https://www.python.org/) dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where **[uv](https://github.com/astral-sh/uv)**, an extremely fast Python package manager written in Rust, comes in.
+Virtual environments create isolated, project-specific spaces for Python ([6]) dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where uv ([7]), an extremely fast Python package manager written in Rust, comes in.
 
 While our initial PostgreSQL and pgAdmin setup might not require many Python packages, establishing a virtual environment from the start creates a **clean, reproducible foundation**. This prepares a conflict-free space for any future Python tools or applications that interact with our database.
 
@@ -331,7 +331,7 @@ uv add click tqdm python-dotenv
 
 **Step 3: Add Command-Line Interface with Click**
 
-To make our ingestion script more flexible and reusable, we'll adapt it to accept user-defined parameters using [Click](https://click.palletsprojects.com/en/stable/), a Python package for creating command-line interfaces. We'll modify the script to accept three key arguments:
+To make our ingestion script more flexible and reusable, we'll adapt it to accept user-defined parameters using Click ([8]), a Python package for creating command-line interfaces. We'll modify the script to accept three key arguments:
 
 1. **Source URL:** The URL where the CSVs reside.
 2. **Chunk Size:** The number of rows to process in each batch.
@@ -418,11 +418,24 @@ We've successfully built a complete data ingestion pipeline using modern, reprod
 
 ## References
 
-1. DataTalksClub. (2026). [DataTalksClub Data Engineering Zoomcamp Repository](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main).
-2. Docker Inc. (2026). [Docker Docs](https://docs.docker.com/).
-3. GitHub Codespaces. (2026). [GitHub Codespaces Documentation](https://docs.github.com/en/codespaces).
-4. Pallets. (2014). [Click documentation](https://click.palletsprojects.com/en/stable/).
-5. pgAdmin Development Team. (2026). [pgAdmin](https://www.pgadmin.org/).
-6. Python Software Foundation. (2026). [Python](https://www.python.org/).
-7. The PostgreSQL Global Development Group. (2026). [PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database](https://www.postgresql.org/).
-8. UV. (2026). [UV](https://docs.astral.sh/uv/pip/environments/).
+1. GitHub Codespaces. (2026). **GitHub Codespaces Documentation**.
+2. Docker Inc. (2026). **Docker Documentation**.
+3. The PostgreSQL Global Development Group. (2026). **PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database**.
+4. pgAdmin Development Team. (2026). **pgAdmin**.
+5. DataTalksClub. (2026). **DataTalksClub Data Engineering Zoomcamp Repository**.
+6. Python Software Foundation. (2026). **Python**.
+7. UV. (2026). **UV**.
+8. Pallets. (2014). **Click documentation**.
+
+---
+
+[1]: https://docs.github.com/en/codespaces/
+[2]: https://docs.docker.com/
+[3]: https://www.postgresql.org/
+[4]: https://www.pgadmin.org/
+[5]: https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main
+[6]: https://www.python.org/
+[7]: https://docs.astral.sh/uv/pip/environments/
+[8]: https://click.palletsprojects.com/en/stable/
+
+
