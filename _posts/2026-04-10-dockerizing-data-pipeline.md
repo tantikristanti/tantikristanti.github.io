@@ -245,16 +245,22 @@ Our exploration covered:
 
 ---
 
+## GitHub Repository
+
+Docker configuration and codes are available in my [GitHub repository](https://github.com/tantikristanti/postgres-pgadmin-codespaces).
+
+---
+
 ## References
 
 1. Docker Inc. (2026). **Docker Docs**.
 2. The PostgreSQL Global Development Group. (2026). **PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database**.
 3. pgAdmin Development Team. (2026). **pgAdmin**.
-4. DataTalksClub. (2026). **DataTalksClub Data Engineering Zoomcamp Repository**.
+4. DataTalksClub. (2026). **DataTalksClub Data Engineering Zoomcamp Repository: Docker-SQL**.
 
 ---
 
 [1]: https://docs.docker.com/
 [2]: https://www.postgresql.org/
 [3]: https://www.pgadmin.org/
-[4]: https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main
+[4]: https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main/01-docker-terraform/docker-sql
