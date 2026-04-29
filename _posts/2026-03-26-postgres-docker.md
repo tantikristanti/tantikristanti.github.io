@@ -18,7 +18,7 @@ Running Postgres with Docker offers several advantages. It allows us to deploy t
 
 ## Install and Run Docker Desktop
 
-Installing Docker is a straightforward process ([1]). The official [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/) documentation provides step-by-step instructions for installing it on various operating systems, including macOS, Windows, and Linux.
+Installing Docker is a straightforward process [[1]]. The official [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/) documentation provides step-by-step instructions for installing it on various operating systems, including macOS, Windows, and Linux.
 
 After installation, verify that Docker is working properly by running the version or info command.
 
@@ -234,11 +234,11 @@ docker compose down
 
 ## Connect to the Postgres Server
 
-There are several ways to connect to a running Postgres server, including using the terminal, [pgAdmin](https://www.pgadmin.org/), and connecting it as part of our programming code. In this guide, we'll connect to the server using the terminal and pgAdmin ([2]).
+There are several ways to connect to a running Postgres server, including using the terminal, [pgAdmin](https://www.pgadmin.org/), and connecting it as part of our programming code. In this guide, we'll connect to the server using the terminal and pgAdmin [[2]].
 
 ### Exec Into the Posgtres Container
 
-One way to ensure the PostgreSQL ([3]) server is working properly is to run a command inside the running container using `docker exec` in interactive mode `-it` by specifying the command itself (e.g., psql) and the username `-U` to access the server. `psql` is an interface we can access through the terminal to interact with the Postgres database.
+One way to ensure the PostgreSQL [[3]] server is working properly is to run a command inside the running container using `docker exec` in interactive mode `-it` by specifying the command itself (e.g., psql) and the username `-U` to access the server. `psql` is an interface we can access through the terminal to interact with the Postgres database.
 
 ```bash
 docker exec -it posgtres-docker psql -U postgres
@@ -348,11 +348,11 @@ We’ve journeyed through the process of containerizing PostgreSQL with Docker, 
 
 **What we accomplished:**
 
-- ✅ **Established a containerized PostgreSQL environment** that runs consistently across any operating system with Docker installed.
-- ✅ **Mastered container lifecycle management**, from pulling images and running containers to stopping and removing them efficiently.
-- ✅ **Implemented best practices** like environment variable management via `.env` files and infrastructure-as-code with Docker Compose.
-- ✅ **Ensured data persistence** by configuring Docker volumes that survive container destruction and recreation.
-- ✅ **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces.
+- **Established a containerized PostgreSQL environment** that runs consistently across any operating system with Docker installed.
+- **Mastered container lifecycle management**, from pulling images and running containers to stopping and removing them efficiently.
+- **Implemented best practices** like environment variable management via `.env` files and infrastructure-as-code with Docker Compose.
+- **Ensured data persistence** by configuring Docker volumes that survive container destruction and recreation.
+- **Connected and validated** our setup through both command-line (`psql`) and graphical (pgAdmin) interfaces.
 
 ---
 

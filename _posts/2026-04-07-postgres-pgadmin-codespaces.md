@@ -15,7 +15,7 @@ Setting up and running a database development environment shouldn't be a project
 
 ## What is GitHub Codespaces?
 
-In this guide, we will run two containers in a GitHub codespaces ([1]) environment with the following architecture ([2]).
+In this guide, we will run two containers in a GitHub codespaces [[1]] environment with the following architecture [[2]].
 
 ![alt text](/images/posts/2026-04-07-postgres-pgadmin-codespaces/1-container-architecture.png "Container Architecture")
 
@@ -44,7 +44,7 @@ For personal use, GitHub Codespaces includes a monthly free tier with every GitH
 
 ### Step 1: Launch the Cloud Development Environment
 
-Before configuring our database, we need to set up GitHub Codespaces, which provides a cloud-based development environment with tools like Python ([3]) and Docker ([4]) pre-installed.
+Before configuring our database, we need to set up GitHub Codespaces, which provides a cloud-based development environment with tools like Python [[3]] and Docker [[4]] pre-installed.
 
 Here’s how to get started:
 
@@ -94,7 +94,7 @@ You should see output confirming that both Python and Docker are installed and a
 
 ## Create .env File
 
-PostgreSQL ([5]) and pgAdmin ([6]) will be run as Docker containers, with connection credentials sourced from a `.env` file as follows:
+PostgreSQL [[5]] and pgAdmin [[6]] will be run as Docker containers, with connection credentials sourced from a `.env` file as follows:
 
 ```bash
 # PostgreSQL environment variables for Docker Compose
@@ -356,10 +356,10 @@ git push
 
 We’ve successfully transformed a traditionally complex local setup into a portable, cloud-native database environment, all with just a few clicks. What we accomplished:
 
-- ✅ **Launched a fully configured development workspace** using GitHub Codespaces, eliminating manual tool installation and environment inconsistencies.
-- ✅ **Provisioned a PostgreSQL database** with a persistent volume, configured via environment variables for security and reproducibility.
-- ✅ **Deployed pgAdmin** as a web-based graphical interface to manage, explore, and query our database effortlessly.
-- ✅ **Orchestrated the entire stack** using Docker Compose, turning multiple manual `docker run` commands into a single, version-controlled `docker-compose.yaml` file that defines our infrastructure as code.
+- **Launched a fully configured development workspace** using GitHub Codespaces, eliminating manual tool installation and environment inconsistencies.
+- **Provisioned a PostgreSQL database** with a persistent volume, configured via environment variables for security and reproducibility.
+- **Deployed pgAdmin** as a web-based graphical interface to manage, explore, and query our database effortlessly.
+- **Orchestrated the entire stack** using Docker Compose, turning multiple manual `docker run` commands into a single, version-controlled `docker-compose.yaml` file that defines our infrastructure as code.
 
 ---
 

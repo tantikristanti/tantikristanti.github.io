@@ -24,8 +24,8 @@ To follow along with this guide, you'll need a few tools and resources ready. If
 
 ### What You'll Need
 
-- *Docker* ([1]) installed and running on your system.
-- *A working PostgreSQL ([2]) and pgAdmin ([3]) environment* already set up from [Mastering Data Pipelines with Postgres &amp; pgAdmin in GitHub Codespaces](https://tantikristanti.github.io/posts/2026/04/structured-data-ingestion-postgres-pgadmin/).
+- *Docker* [[1]] installed and running on your system.
+- *A working PostgreSQL [[2]] and pgAdmin [[3]] environment* already set up from [Mastering Data Pipelines with Postgres &amp; pgAdmin in GitHub Codespaces](https://tantikristanti.github.io/posts/2026/04/structured-data-ingestion-postgres-pgadmin/).
 - *The data ingestion script*, available here: [`data-ingestion.py`](https://github.com/tantikristanti/postgres-pgadmin-codespaces/blob/main/data-ingestion.py).
 
 > ⭐️ **Note:** If you haven't yet configured your database environment, please start with the [previous tutorial](https://tantikristanti.github.io/posts/2026/04/structured-data-ingestion-postgres-pgadmin/) before continuing here. It provides the essential foundation we’ll build upon in this guide.
@@ -95,7 +95,7 @@ docker network inspect [network]
 
 ## Evolving Our Architecture: A Fully Containerized Ecosystem
 
-We're evolving our system design from a hybrid approach to a *unified container architecture*, where every component (PostgreSQL, pgAdmin, and our data ingestion application) resides within the same Docker network ([4]). This transition from architecture **A** to **B** represents a significant shift in how our services communicate and interact.
+We're evolving our system design from a hybrid approach to a *unified container architecture*, where every component (PostgreSQL, pgAdmin, and our data ingestion application) resides within the same Docker network [[4]]. This transition from architecture **A** to **B** represents a significant shift in how our services communicate and interact.
 
 In our [previous guide](https://tantikristanti.github.io/posts/2026/04/structured-data-ingestion-postgres-pgadmin/), the data ingestion application ran on the host machine and connected to PostgreSQL via `localhost:5432`. This worked because we mapped the container's port 5432 to the host's port 5432.
 
@@ -237,11 +237,11 @@ We've completed a transformative journey from local script to portable container
 
 Our exploration covered:
 
-- ✅ **Understanding architectural evolution** from hybrid to fully containerized systems.
-- ✅ **Configuring container networking** for seamless inter-service communication.
-- ✅ **Building optimized Docker images** with multi-stage builds and dependency management.
-- ✅ **Orchestrating containerized data ingestion** with proper environment configuration.
-- ✅ **Implementing efficient data processing** with chunked loading for large datasets.
+- **Understanding architectural evolution** from hybrid to fully containerized systems.
+- **Configuring container networking** for seamless inter-service communication.
+- **Building optimized Docker images** with multi-stage builds and dependency management.
+- **Orchestrating containerized data ingestion** with proper environment configuration.
+- **Implementing efficient data processing** with chunked loading for large datasets.
 
 ---
 

@@ -32,10 +32,10 @@ This guide assumes you've already completed the foundational setup from our comp
 
 **What the setup provides:**
 
-- ✅ A running GitHub Codespace ([1]).
-- ✅ Docker ([2]) containers for PostgreSQL ([3]) and pgAdmin ([4]).
-- ✅ pgAdmin configured with server connection.
-- ✅ Configured `.env` file with credentials. We will update the file slightly to change the database name as follows:
+- A running GitHub Codespace [[1]].
+- Docker [[2]] containers for PostgreSQL [[3]] and pgAdmin [[4]].
+- pgAdmin configured with server connection.
+- Configured `.env` file with credentials. We will update the file slightly to change the database name as follows:
 
 ```
 # PostgreSQL environment variables for Docker Compose
@@ -85,7 +85,7 @@ If any step fails, **return to [the companion tutorial](https://tantikristanti.g
 
 ## About This Guide's Structure
 
-Now that your environment is ready, this guide will shift focus to **building the data pipeline**. The following architecture outlines the general flow we will implement ([5]):
+Now that your environment is ready, this guide will shift focus to **building the data pipeline**. The following architecture outlines the general flow we will implement [[5]]:
 
 ![alt text](/images/posts/2026-04-08-structured-data-ingestion-postgres-pgadmin/3-system-architecture.png "System Architecture")
 
@@ -113,7 +113,7 @@ While the original data is stored in PARQUET format, for this project it has bee
 
 ## Create a Virtual Environment with UV
 
-Virtual environments create isolated, project-specific spaces for Python ([6]) dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where uv ([7]), an extremely fast Python package manager written in Rust, comes in.
+Virtual environments create isolated, project-specific spaces for Python [[6]] dependencies. This ensures each project has precisely the packages and versions it needs, preventing conflicts. Traditional package managers can be slow, especially when resolving complex dependencies. That's where uv [[7]], an extremely fast Python package manager written in Rust, comes in.
 
 While our initial PostgreSQL and pgAdmin setup might not require many Python packages, establishing a virtual environment from the start creates a **clean, reproducible foundation**. This prepares a conflict-free space for any future Python tools or applications that interact with our database.
 
@@ -331,7 +331,7 @@ uv add click tqdm python-dotenv
 
 **Step 3: Add Command-Line Interface with Click**
 
-To make our ingestion script more flexible and reusable, we'll adapt it to accept user-defined parameters using Click ([8]), a Python package for creating command-line interfaces. We'll modify the script to accept three key arguments:
+To make our ingestion script more flexible and reusable, we'll adapt it to accept user-defined parameters using Click [[8]], a Python package for creating command-line interfaces. We'll modify the script to accept three key arguments:
 
 1. **Source URL:** The URL where the CSVs reside.
 2. **Chunk Size:** The number of rows to process in each batch.
@@ -407,12 +407,12 @@ git push
 
 We've successfully built a complete data ingestion pipeline using modern, reproducible practices. Our journey covered:
 
-- ✅ **Environment Setup:** Leveraged GitHub Codespaces to eliminate "works on my machine" issues.
-- ✅ **Containerized Infrastructure:** Used Docker Compose to orchestrate PostgreSQL and pgAdmin.
-- ✅ **Isolated Development:** Created a virtual environment with `uv` for fast, conflict-free dependency management.
-- ✅ **Data Exploration:** Used Jupyter Notebooks to understand our NYC Taxi dataset.
-- ✅ **Batch Processing:** Implemented efficient chunk-based ingestion to handle 3.7+ million records.
-- ✅ **Automated Pipeline:** Connected Python scripts to PostgreSQL using SQLAlchemy for seamless data loading.
+- **Environment Setup:** Leveraged GitHub Codespaces to eliminate "works on my machine" issues.
+- **Containerized Infrastructure:** Used Docker Compose to orchestrate PostgreSQL and pgAdmin.
+- **Isolated Development:** Created a virtual environment with `uv` for fast, conflict-free dependency management.
+- **Data Exploration:** Used Jupyter Notebooks to understand our NYC Taxi dataset.
+- **Batch Processing:** Implemented efficient chunk-based ingestion to handle 3.7+ million records.
+- **Automated Pipeline:** Connected Python scripts to PostgreSQL using SQLAlchemy for seamless data loading.
 
 ---
 
