@@ -15,8 +15,12 @@ redirect_from:
 - Specialization: Language and Computer Science [*Langue et Informatique*]
 - Focus areas: Literature, Philology, Linguistics [*Littérature, Philologie, Linguistique*]
 - Field of study: Arts, Humanities, Languages [*Arts, Lettres, Langues*]
-- Master 2 Thesis:***Enhancement of a Named Entity Recognition and Disambiguation (NERD) system*** [*Enrichissement d’un système de reconnaissance et de désambiguïsation d’entités nommées*]
+- Master 2 Thesis: 
+  
+  ***Enhancement of a Named Entity Recognition and Disambiguation (NERD) system*** [*Enrichissement d’un système de reconnaissance et de désambiguïsation d’entités nommées*]
+
 - Master 1 Thesis:
+
   ***Semantic annotation and ontology population based on an autism corpus*** [*Annotation sémantique et peuplement d’ontologie à partir du corpus sur l'autisme*]
 
 ---
@@ -29,6 +33,7 @@ redirect_from:
 - Focus areas: Informatics
 - Field of study: Engineering
 - Thesis:
+
   ***Enterprise Integration for Academic and Financial Functions***
 
 ---
@@ -37,7 +42,9 @@ redirect_from:
 
 ### Research & Development Engineer
 
-**[INRIA](https://www.inria.fr/en) ([ALMAnaCH](https://almanach.inria.fr/index-en.html) Team)** — Paris, France*Nov 2017 – Apr 2023*
+**[INRIA](https://www.inria.fr/en) ([ALMAnaCH](https://almanach.inria.fr/index-en.html) Team)** — Paris, France
+
+*[Nov 2017 – Apr 2023]*
 
 - Engaged in Natural Language Processing (NLP) development across multiple research and engineering projects:
   - Improved document extraction and text processing pipelines.
@@ -49,7 +56,9 @@ redirect_from:
 
 ### Full-Time Lecturer
 
-**[Maranatha Christian University](https://www.maranatha.edu/en/)** — Bandung, Indonesia*2008 – 2015*
+**[Maranatha Christian University](https://www.maranatha.edu/en/)** — Bandung, Indonesia
+
+*[2008 – 2015]*
 
 - Taught courses in informatics, data processing, and information systems.
 - Delivered training for professional certifications, including CEH (Certified Ethical Hacker) and SAP ERP.
