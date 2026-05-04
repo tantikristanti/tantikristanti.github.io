@@ -6,138 +6,238 @@ author_profile: true
 redirect_from:
   - /resume
 ---
-Education
-=========
+## Education
 
-* **Master in Language and Computer Science**, [Sorbonne Université](https://www.sorbonne-universite.fr/), France
+### Master in Language and Computer Science
 
-  * Field of study: Arts, Humanities, Languages [*Arts, Lettres, Langues*]
-  * Major: Literature, Philology, Linguistics [*Littérature, Philologie, Linguistique*]
-  * Specialization: Language and Computer Science [*Langue et Informatique*]
-  * Master 1 Thesis:
-    Semantic annotation and ontology population based on the autism corpus [*Annotation sémantique et peuplement d’ontologie à partir du corpus sur l'autisme*]
-  * Master 2 Thesis:
-    Enhancement of a Named Entity Recognition and Disambiguation (NERD) system [*Enrichissement d’un système de reconnaissance et de désambiguïsation d’entités nommées*]
-* **Master in Informatics**, [Bandung Institute of Technology (ITB)](https://itb.ac.id/en/), Indonesia
+**[Sorbonne Université](https://www.sorbonne-universite.fr/)**, France
 
-  * Field of study: Engineering
-  * Major: Informatics
-  * Specialization: Information Systems
-  * Master Thesis:
-    Enterprise Integration for Academic and Financial Functions
+- Specialization: Language and Computer Science [*Langue et Informatique*]
+- Focus areas: Literature, Philology, Linguistics [*Littérature, Philologie, Linguistique*]
+- Field of study: Arts, Humanities, Languages [*Arts, Lettres, Langues*]
+- Master 2 Thesis:***Enhancement of a Named Entity Recognition and Disambiguation (NERD) system*** [*Enrichissement d’un système de reconnaissance et de désambiguïsation d’entités nommées*]
+- Master 1 Thesis:
+  ***Semantic annotation and ontology population based on an autism corpus*** [*Annotation sémantique et peuplement d’ontologie à partir du corpus sur l'autisme*]
 
-Languages
-=========
+---
 
-* French: fluent
-* English: fluent
-* Indonesian: native
+### Master in Informatics
 
-Work Experience
-===============
+**[Bandung Institute of Technology (ITB)](https://itb.ac.id/en/)**, Indonesia
 
-* **[November 2017 – April 2023]**: Research and Development Engineer
+- Specialization: Information Systems
+- Focus areas: Informatics
+- Field of study: Engineering
+- Thesis:
+  ***Enterprise Integration for Academic and Financial Functions***
 
-  * National Institute for Research in Digital Science and Technology ([INRIA](https://www.inria.fr/en)), Paris, France
-  * [ALMAnaCH](https://almanach.inria.fr/index-en.html) Project Team
-* **[2008 – 2015]**: Full-Time Lecturer
+---
 
-  * Faculty of Information Technology,
-    [Maranatha Christian University](https://www.maranatha.edu/en/),
-    Bandung Indonesia
+## Professional Experience
 
-Technical Skills
-================
+### Research & Development Engineer
 
-* Programming languages:
-  * Python, Java, C, C#
-* ML/DL frameworks:
-  * PyTorch, TensorFlow, Keras, Hugging Face
-* Databases:
-  * PostgreSQL, SQL, MySQL
-* Vector databases:
-  * ChromaDB, Faiss, pgvector
-* Graph Database Management System (GDMS):
-  * Neo4j + Cypher (declarative language)
-* Semantic Web tools:
-  * RDF (Resource Description Framework), SPARQL
-* Embedding models:
-  * Sentence-transformer, embeddinggemma, qwen-embedding
-* LLMs:
-  * Llama, Mistral, Deepseek, Qwen, GPT, BERT 
-* RAG and Agentic AI platforms:
-  * LangChain, LangGraph, LlamaIndex, smolagents
-* APIs:
-  * RESTful API, FastAPI
-* API testing tools:
-  * Postman, Insomnia
-* Web interfaces and applications:
-  * Gradio, Streamlit, Java Spring Boot
-* Version control systems (VCS), CI/CD:
-  * Git, GitHub, GitLab
-* Deployment:
-  * Docker, Kubernetes (K8s)
-* Cloud platforms:
-  * AWS, Azure, GCP
-* SAP R/3 modules (user level):
-  * SAP system administrators (ADM100)
-  * Project management functions in SAP (PLM200)
-  * ABAP programming language of SAP (BC400)
-  * Business concepts and methods in Management Accounting (AC040)
+**[INRIA](https://www.inria.fr/en) ([ALMAnaCH](https://almanach.inria.fr/index-en.html) Team)** — Paris, France*Nov 2017 – Apr 2023*
 
-Professional Certification
-==========================
+- Engaged in Natural Language Processing (NLP) development across multiple research and engineering projects:
+  - Improved document extraction and text processing pipelines.
+  - Developed information extraction systems for scientific and healthcare domains.
+  - Enhanced and optimized Named Entity Recognition and Disambiguation (NERD) systems.
+- Collaborated with cross-functional teams across France, Germany, and Poland to develop and present AI and NLP solutions.
+
+---
+
+### Full-Time Lecturer
+
+**[Maranatha Christian University](https://www.maranatha.edu/en/)** — Bandung, Indonesia*2008 – 2015*
+
+- Taught courses in informatics, data processing, and information systems.
+- Delivered training for professional certifications, including CEH (Certified Ethical Hacker) and SAP ERP.
+- Conducted research in text classification, clustering, and educational data mining.
+- Supervised student projects and academic research.
+
+---
+
+## Technical Skills
+
+### Programming
+
+- Python, Java, C, C#
+
+### Machine Learning & Deep Learning
+
+- PyTorch, TensorFlow, Keras, Hugging Face
+
+### Data & Analytics
+
+**Databases**
+
+- PostgreSQL, MySQL
+
+**Query Language**
+
+- SQL
+
+**Big Data & Processing**
+
+- Apache Spark
+- Google BigQuery
+
+**Analytics Engineering**
+
+- dbt
+
+---
+
+### AI / LLM Ecosystem
+
+**Large Language Models (LLMs)**
+
+- LLaMA, Mistral, DeepSeek, Qwen, GPT, BERT
+
+**Embeddings**
+
+- FastEmbed, Sentence-Transformers, EmbeddingGemma, Qwen-Embedding
+
+**RAG & Agentic AI**
+
+- LangChain, LangGraph, LlamaIndex, smolagents
+
+**Vector Databases**
+
+- Qdrant, ChromaDB, FAISS, pgvector
+
+---
+
+### Data Architecture
+
+**Graph Databases**
+
+- Neo4j (Cypher)
+
+**Semantic Web**
+
+- RDF, SPARQL
+
+---
+
+### Software Engineering
+
+**APIs**
+
+- REST, FastAPI
+
+**Testing Tools**
+
+- Postman, Insomnia
+
+**Web Applications**
+
+- Gradio, Streamlit
+
+**Version Control & CI/CD**
+
+- Git, GitHub, GitLab
+
+---
+
+### Infrastructure & DevOps
+
+- Docker, Kubernetes
+- Terraform
+
+---
+
+### Cloud Platforms
+
+- AWS, Azure, GCP
+
+---
+
+### Enterprise Systems (SAP)
+
+- SAP R/3:
+  - System Administration (ADM100)
+  - Project Management (PLM200)
+  - ABAP Programming (BC400)
+  - Management Accounting (AC040)
+
+---
+
+## Languages
+
+- French — Fluent
+- English — Fluent
+- Indonesian — Native
+
+---
+
+## 🏆 Academic Honors
+
+**Best Faculty Member (Lecturer)**
+
+[Maranatha Christian University](https://www.maranatha.edu/en/) — 07/08/2009
+
+- Awarded for outstanding academic performance (2008–2009)
+
+---
+
+## Research Projects
+
+### Lecturer Portal with Text Classification
+
+*2014 – 2015*
+
+- Developed a lecturer portal leveraging **text classification algorithms**.
+- Funded by Maranatha Christian University.
+
+---
+
+### Classification & Clustering for Academic Data
+
+*2013 – 2014*
+
+- Built analytical models for **student and lecturer data**.
+- Funded by a competitive grant from the Indonesian Directorate General of Higher Education, Research and Technology (DIKTI), Ministry of Education and Culture, Indonesia.
+
+---
+
+## Certifications
 
 <ul>{% for post in site.certifications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
-Academic Honor
-==============
+---
 
-* Best Faculty Member (Lecturer), 07/08/2009:
-  * Evaluation of Academic Performance for the Even Semester 2008/2009
-  * Faculty of Information Technology,
-    [Maranatha Christian University](https://www.maranatha.edu/en/),
-    Bandung, Indonesia
+## Training & Workshops
 
-Research
-========
+<ul>{% for post in site.training reversed %}
+    {% include archive-single-cv.html %}
+  {% endfor %}</ul>
 
-1. Development of Lecturer Portal Leveraging Text Classification Algorithm [*Pengembangan Portal Dosen Memanfaatkan Algoritma Klasifikasi Teks*]
+---
 
-* Years: 2014-2015
-* Funded by: Maranatha Christian University
-
-2. Classification and Clustering Analysis Model for Student and Lecturer Data in Higher Education [*Model Analisis Classification dan Clustering untuk Data Mahasiswa dan Dosen di Perguruan Tinggi*]
-
-* Years: 2013-2014
-* Funded by: Competitive grant from the Directorate General of Higher Education, Research and Technology (DIKTI), Ministry of Education and Culture, Indonesia.
-
-Publications
-============
+## Publications
 
 <ul>{% for post in site.publications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
-Teaching
-========
+---
+
+## Teaching
 
 <ul>{% for post in site.teaching reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
-Administrative Roles
-====================
+---
+
+## Administrative Roles
 
 <ul>{% for post in site.roles reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
-Training and Workshop
-=====================
-
-<ul>{% for post in site.training reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
+---
