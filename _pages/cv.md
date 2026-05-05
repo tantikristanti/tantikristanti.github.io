@@ -73,9 +73,7 @@ redirect_from:
 
 - Python, Java, C, C#
 
-### Machine Learning & Deep Learning
-
-- PyTorch, TensorFlow, Keras, Hugging Face
+---
 
 ### Data & Analytics
 
@@ -95,6 +93,24 @@ redirect_from:
 **Analytics Engineering**
 
 - dbt
+
+---
+
+### Data Architecture
+
+**Graph Databases**
+
+- Neo4j (Cypher)
+
+**Semantic Web**
+
+- RDF, SPARQL
+
+---
+
+### Machine Learning & Deep Learning
+
+- PyTorch, TensorFlow, Keras, Hugging Face
 
 ---
 
@@ -118,27 +134,11 @@ redirect_from:
 
 ---
 
-### Data Architecture
-
-**Graph Databases**
-
-- Neo4j (Cypher)
-
-**Semantic Web**
-
-- RDF, SPARQL
-
----
-
 ### Software Engineering
 
 **APIs**
 
-- REST, FastAPI
-
-**Testing Tools**
-
-- Postman, Insomnia
+- FastAPI, REST
 
 **Web Applications**
 
@@ -147,6 +147,10 @@ redirect_from:
 **Version Control & CI/CD**
 
 - Git, GitHub, GitLab
+
+**Testing Tools**
+
+- Postman, Insomnia
 
 ---
 
