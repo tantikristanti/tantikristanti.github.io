@@ -90,7 +90,7 @@ The result is a brittle pipeline in which a small number of problematic records 
 A more resilient approach treats data validation as a dedicated stage rather than an afterthought. Instead of loading records directly into constrained tables, the pipeline is divided into three logical layers ([Figure 1](#fig1)):
 
 <figure id="fig1">
-  <img src="/images/posts/2026-06-02-learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/1-logical-layers.png" alt="ETL pipeline architecture" width="100%">
+  <img src="/images/posts/2026-06-02-learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/1-logical-layers.png" alt="ETL pipeline architecture" width="90%">
   <figcaption>Figure 1: Three‑layer staging architecture for CIQUAL ETL.</figcaption>
 </figure>
 
@@ -292,7 +292,7 @@ self.conn.commit()
 The SQL statements above define two of the tables used in the pipeline. The remaining tables can be created following the same pattern. [Figure 3](#fig3) presents the complete entity–relationship (ER) diagram, showing the final schema and the relationships between all tables.
 
 <figure id="fig3">
-  <img src="/images/posts/2026-06-02-learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/3-ciqual-er-diagram.png" alt="CIQUAL ER-Diagram" width="100%">
+  <img src="/images/posts/2026-06-02-learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/3-ciqual-er-diagram.png" alt="CIQUAL ER-Diagram" width="80%">
   <figcaption>Figure 3: CIQUAL ER-Diagram.</figcaption>
 </figure>
 
