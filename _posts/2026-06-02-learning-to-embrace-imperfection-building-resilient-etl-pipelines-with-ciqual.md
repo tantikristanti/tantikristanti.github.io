@@ -23,11 +23,7 @@ In this article, we'll build a resilient ETL pipeline that embraces this reality
 
 ## Introduction
 
-Traditional ETL pipelines are built around a simple assumption: source data is complete, consistent, and ready to fit neatly into a relational database. The process is straightforward: extract the data, transform it into the target schema, and load it into the destination system. However, when the data contains broken relationships or missing references, database constraints can quickly expose those issues. A single foreign key violation may be enough to halt the entire load process, leaving valid records stranded alongside problematic ones.
-
 A more resilient approach treats data quality as an expected challenge rather than an exceptional failure. Instead of loading records directly into constrained tables, the pipeline introduces a validation layer between parsing and persistence. Raw data is staged first, relationships are verified before insertion, and records that fail validation are isolated for review. Valid data continues through the pipeline, while inconsistencies are logged and reconciled separately. This allows the database to maintain strict referential integrity without sacrificing the ability to ingest imperfect datasets.
-
-In this guide, we'll apply that approach to [CIQUAL](https://ciqual.anses.fr/#/cms/download/node/20)[[1][1]], the French food composition database. Although CIQUAL is well-structured and extensively documented, it still exhibits many of the data quality issues. Foods may reference group codes that no longer exist, nutrient composition records may point to missing foods, and placeholder values such as `00`, `0000`, or `000000` may appear where valid identifiers are expected.
 
 Rather than weakening database constraints or ignoring these inconsistencies, we'll build an ETL pipeline capable of detecting, documenting, and handling them systematically. Along the way, we'll learn how to:
 
@@ -44,7 +40,7 @@ Ultimately, the objective is not simply to load data into PostgreSQL. It is to b
 
 ## Why CIQUAL? A Dataset That Reflects Reality
 
-Before exploring the pipeline architecture, it's worth understanding why CIQUAL is such an effective dataset for studying data engineering challenges. Maintained by the French Agency for Food, Environmental and Occupational Health & Safety (ANSES), CIQUAL contains nutritional information for approximately 3,500 foods and 74 nutritional components. The data is distributed in a structured XML format with clearly defined relationships between foods, food groups, nutrients, and reference sources.
+Before exploring the pipeline architecture, it's worth understanding why [CIQUAL](https://ciqual.anses.fr/#/cms/download/node/20)[[1][1]] is such an effective dataset for studying data engineering challenges. Maintained by the French Agency for Food, Environmental and Occupational Health & Safety (ANSES), CIQUAL contains nutritional information for approximately 3,500 foods and 74 nutritional components. The data is distributed in a structured XML format with clearly defined relationships between foods, food groups, nutrients, and reference sources.
 
 The dataset is not broken. The codes `00`, `0000`, `000000` are documented as placeholders meaning *unknown hierarchy* or *not applicable*. The problem is not the data; it is the assumption that every foreign key must point to an existing row. A resilient pipeline must understand and respect the dataset’s documented semantics.
 
