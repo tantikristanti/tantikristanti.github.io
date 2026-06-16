@@ -12,7 +12,7 @@ tags:
   - fastapi
   - embeddings
 ---
-In a [previous post](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/), we built a resilient ETL pipeline that ingested the French CIQUAL food composition dataset into PostgreSQL. We ended with a clean, validated relational schema, but a static database is like a library with no librarian. The information is there, yet no one can ask natural questions like *“What foods are rich in omega‑3 but low in mercury?”* or *“Quels aliments contiennent beaucoup de protéines et peu de matières grasses?”*.
+In a [previous post](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/), we built a resilient ETL pipeline that ingested the French CIQUAL food composition dataset into PostgreSQL. We ended with a clean, validated relational schema, but a static database is like a library with no librarian. The information is there, yet no one can ask natural questions like *"What foods are rich in omega‑3 but low in mercury?"* or *"Quels aliments contiennent beaucoup de protéines et peu de matières grasses?"*.
 
 This post picks up where that pipeline left off. We transform our PostgreSQL database into a **persistent semantic search engine**, one that understands the *meaning* of queries, not just keywords. The key is storing **vector embeddings** directly inside PostgreSQL using the `pgvector` extension. Unlike dedicated vector databases such as Qdrant or Pinecone, this approach keeps everything in a single system: metadata, relationships, and vectors coexist under the same ACID (atomicity, consistency, isolation, and durability) guarantees.
 
@@ -56,13 +56,13 @@ Both approaches are valid, but they serve different needs. The following table s
 | Hybrid search (vector + keyword) | Built‑in                                                                            | Requires pg_trgm or tsvector combined with vector |
 | Ease of use                      | REST/gRPC API, client libraries                                                      | Ordinary SQL, any PostgreSQL driver               |
 
-For our CIQUAL dataset (~3,500 foods), a dedicated vector database is overkill. `pgvector` integrates seamlessly into the existing ETL pipeline and keeps the stack lean.
+For our CIQUAL dataset (~3,500 foods) [[3]], a dedicated vector database is overkill. `pgvector` integrates seamlessly into the existing ETL pipeline and keeps the stack lean.
 
 ---
 
 ## Step 1: Enable `pgvector` in PostgreSQL
 
-If you used the Docker command from [the previous ETL blog](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/), you already have the `pgvector/pgvector` image. If not, start the container with:
+If you used the Docker [[4]] command from [the previous ETL blog](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/) to run Postgres [[5]] container, you already have the `pgvector/pgvector` image [[6]]. If not, start the container with:
 
 ```bash
 docker run -d --name pgvector \
@@ -91,7 +91,7 @@ Now our PostgreSQL can store and search vectors.
 
 ## Step 2: Choose a Multilingual Embedding Model
 
-We need a model that understands both French and English, because CIQUAL provides names in both languages and users may ask in either. In this project, we will use **`paraphrase-multilingual-MiniLM-L12-v2`** from Sentence‑Transformers.
+We need a model that understands both French and English, because CIQUAL provides names in both languages and users may ask in either. In this project, we will use **`paraphrase-multilingual-MiniLM-L12-v2`** from Sentence‑Transformers [[7]].
 
 Why this model?
 
@@ -251,7 +251,7 @@ The operator `<=>` computes cosine distance. We transform it to similarity with 
 
 ## Step 7: FastAPI Wrapper – Expose the Search as a REST API
 
-To make the search engine usable by other applications (web frontend, mobile app, RAG pipeline), we wrap it in a FastAPI application. The [`fastapi_app.py`](https://github.com/tantikristanti/Generative-AI-LLMs/blob/main/food-nutrition-semantic-search-rag/src/ciqual_etl/fastapi_app.py) module contains:
+To make the search engine usable by other applications (web frontend, mobile app, RAG pipeline), we wrap it in a FastAPI application [[8]]. The [`fastapi_app.py`](https://github.com/tantikristanti/Generative-AI-LLMs/blob/main/food-nutrition-semantic-search-rag/src/ciqual_etl/fastapi_app.py) module contains:
 
 ```python
 from fastapi import FastAPI, Query
@@ -298,7 +298,7 @@ async def search_get(query: str = Query(...), top_k: int = 5):
     return SearchResponse(query=query, top_k=top_k, results=results)
 ```
 
-The application starts with the command:
+The application starts with the `uvicorn` [[9]] command:
 
 ```bash
 uv run uvicorn ciqual_etl.fastapi_app:app --reload --port 8000
@@ -356,7 +356,7 @@ Both return the following response:
 
 ## Performance and Scaling Considerations
 
-With 3,500 foods, the search latency is consistently below 100 ms on a modest laptop. The IVFFlat index with `lists = 100` provides a good balance – recall is ~98% compared to exact brute‑force.
+With 3,500 foods, the search latency is consistently below 100 ms on a modest laptop [[10]]. The IVFFlat index with `lists = 100` provides a good balance, recall is ~98% compared to exact brute‑force [[10], [11]].
 
 If your dataset grows to hundreds of thousands or millions of rows, consider:
 
@@ -365,13 +365,13 @@ If your dataset grows to hundreds of thousands or millions of rows, consider:
 * Partitioning the table by food category.
 * Using a dedicated vector database if you exceed 10 million vectors.
 
-For our use case, pgvector is more than enough.
+For our use case, `pgvector` is more than enough.
 
 ---
 
 ## Conclusion
 
-We extended the resilient CIQUAL ETL pipeline with a persistent semantic search engine, all inside PostgreSQL, using the pgvector extension. By generating multilingual embeddings and storing them alongside the original metadata, we created a system that understands natural language queries in both French and English.
+We extended the resilient CIQUAL ETL pipeline with a persistent semantic search engine, all inside PostgreSQL, using the `pgvector` extension. By generating multilingual embeddings and storing them alongside the original metadata, we created a system that understands natural language queries in both French and English.
 
 The FastAPI wrapper exposes a clean, documented REST API. The response includes full nutrient metadata (as JSONB), making the API immediately usable as the **retrieval component** of a RAG pipeline.
 
@@ -404,21 +404,25 @@ In the next post, we will integrate this search engine with Ollama to build a fu
 1. Ivan Cernja. (2026). **pgvector vs Qdrant in 2026**. [https://encore.dev/articles/pgvector-vs-qdrant](https://encore.dev/articles/pgvector-vs-qdrant).
 2. Alibaba Cloud. (2026). **SQL references**. [https://www.alibabacloud.com/help/en/polardb/polardb-for-postgresql/pgvector-sql-reference/](https://www.alibabacloud.com/help/en/polardb/polardb-for-postgresql/pgvector-sql-reference/).
 3. ANSES. (2025).  **Ciqual French food composition table** . [https://ciqual.anses.fr/](https://ciqual.anses.fr/)
-4. The PostgreSQL Global Development Group. (2026). **PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database**. [https://www.postgresql.org/](https://www.postgresql.org/).
-5. pgvector. (2026).  **pgvector: Open‑source vector similarity search for PostgreSQL** . [https://github.com/pgvector/pgvector](https://github.com/pgvector/pgvector).
-6. Docker Inc. (2026). **Docker Documentation**. [https://docs.docker.com/](https://docs.docker.com/).
+4. Docker Inc. (2026). **Docker Documentation**. [https://docs.docker.com/](https://docs.docker.com/).
+5. The PostgreSQL Global Development Group. (2026). **PostgreSQL: The World&#39;s Most Advanced Open Source Relational Database**. [https://www.postgresql.org/](https://www.postgresql.org/).
+6. pgvector. (2026).  **pgvector: Open‑source vector similarity search for PostgreSQL** . [https://github.com/pgvector/pgvector](https://github.com/pgvector/pgvector).
 7. Sentence‑Transformers. (2026).  **paraphrase-multilingual-MiniLM-L12-v2** . [https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2).
 8. FastAPI. (2026).  **FastAPI framework** . [https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/).
-9. Uvicorn. (2026).  **Uvicorn ASGI server** . [https://www.uvicorn.org/](https://www.uvicorn.org/).
+9. Uvicorn. (2026).  **Uvicorn ASGI server** . [https://uvicorn.dev/](https://uvicorn.dev/).
+10. Mark AI. (2026). **pgvector HNSW vs IVFFlat: Latency Benchmarks on 500K Vectors**. [https://markaicode.com/benchmarks/postgresql-pgvector-benchmark/](https://markaicode.com/benchmarks/postgresql-pgvector-benchmark/)
+11. Mastra AI. (2026). **Benchmarking pgvector RAG performance across different dataset sizes**. [https://mastra.ai/blog/pgvector-perf](https://mastra.ai/blog/pgvector-perf).
 
 ---
 
 [1]: https://encore.dev/articles/pgvector-vs-qdrant
 [2]: https://www.alibabacloud.com/help/en/polardb/polardb-for-postgresql/pgvector-sql-reference/
 [3]: https://ciqual.anses.fr/#/cms/download/node/20
-[4]: https://www.postgresql.org/
-[5]: https://github.com/pgvector/pgvector
-[6]: https://docs.docker.com/
+[4]: https://docs.docker.com/
+[5]: https://www.postgresql.org/
+[6]: https://github.com/pgvector/pgvector
 [7]: https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 [8]: https://fastapi.tiangolo.com/
-[9]: https://www.uvicorn.org/
+[9]: https://uvicorn.dev/
+[10]: https://markaicode.com/benchmarks/postgresql-pgvector-benchmark/
+[11]: https://mastra.ai/blog/pgvector-perf
