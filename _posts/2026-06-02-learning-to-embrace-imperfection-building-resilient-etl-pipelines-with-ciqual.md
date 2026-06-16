@@ -561,6 +561,9 @@ More importantly, this pattern is not limited to CIQUAL. It applies to any datas
 - **Log, don’t crash**: every rejected row is a data quality signal, not a fatal error.
 - **Reconcile**: a reconciliation report turns ETL into a monitoring tool.
 
+**📦 GitHub repository**
+The complete, runnable code for the ETL pipeline is available in the [Generative‑AI‑LLMs GitHub repository](https://github.com/tantikristanti/Generative-AI-LLMs/tree/main/food-nutrition-semantic-search-rag) under the `ciqual_etl` package. 
+
 ---
 
 ## References
