@@ -23,16 +23,6 @@ However, retrieval is only half the story. A complete RAG (Retrieval-Augmented G
 More importantly, we design the entire system using **Object-Oriented Programming (OOP)** principles. The result is a codebase that is maintainable, testable, and extendable, ready to adapt as our needs evolve and as new LLM
 providers emerge.
 
-In a [previous post](https://tantikristanti.github.io/posts/2026/06/persistent-semantic-search-building-a-rag-ready-food-engine-with-fastapi-and-pgvector/), we built a persistent semantic search engine that transformed the [French CIQUAL food composition dataset](https://ciqual.anses.fr/) into a RAG-ready retrieval API. We ended with a FastAPI service that could answer natural language queries like *"What foods are rich in omega‑3?"* by finding semantically similar foods using pgvector.
-
-However, retrieval is only half the story. A complete RAG (Retrieval-Augmented Generation) system needs to take those retrieved documents, feed them to a large language model (LLM), and generate a coherent natural language answer. This post picks up where the search engine left off. We build a full RAG system that:
-
-* Retrieves relevant foods from PostgreSQL using semantic search.
-* Formats the retrieved data into a structured prompt.
-* Sends the prompt to a local LLM (Ollama) and returns the answer.
-
-More importantly, we design the entire system using **Object-Oriented Programming (OOP)** principles. The result is a codebase that is maintainable, testable, and extendable, ready to adapt as our needs evolve and as new LLM providers emerge.
-
 ---
 
 ## Introduction
