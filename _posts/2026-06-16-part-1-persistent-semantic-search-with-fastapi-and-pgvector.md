@@ -1,8 +1,8 @@
 ---
-title: 'Persistent Semantic Search: Building a RAG-Ready Food Engine with FastAPI and pgvector'
+title: 'Building a Production-Ready Food Nutrition Semantic Search and RAG System — Part 1: Persistent Semantic Search with FastAPI and pgvector'
 date: 2026-06-16
 collection: posts
-permalink: /posts/2026/06/persistent-semantic-search-building-a-rag-ready-food-engine-with-fastapi-and-pgvector/
+permalink: /posts/2026/06/part-1-persistent-semantic-search-with-fastapi-and-pgvector/
 toc: true
 tags:
   - ciqual
@@ -12,16 +12,13 @@ tags:
   - fastapi
   - embeddings
 ---
-In a [previous post](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/), we built a resilient ETL pipeline that ingested the French CIQUAL food composition dataset into PostgreSQL. We ended with a clean, validated relational schema, but a static database is like a library with no librarian. The information is there, yet no one can ask natural questions like *"What foods are rich in omega‑3 but low in mercury?"* or *"Quels aliments contiennent beaucoup de protéines et peu de matières grasses?"*.
+This post marks the beginning of a series on **Building a production-ready food nutrition semantic search and Retrieval-Augmented Generation (RAG) system** from the ground up. Over the course of this series, we'll move from data engineering and semantic retrieval to LLM-powered question answering, APIs, user interfaces, and deployment.
 
-This post picks up where that pipeline left off. We transform our PostgreSQL database into a **persistent semantic search engine**, one that understands the *meaning* of queries, not just keywords. The key is storing **vector embeddings** directly inside PostgreSQL using the `pgvector` extension. Unlike dedicated vector databases such as Qdrant or Pinecone, this approach keeps everything in a single system: metadata, relationships, and vectors coexist under the same ACID (atomicity, consistency, isolation, and durability) guarantees.
+Before starting this series, we laid the foundation in a [previous post](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/), where we built a resilient ETL pipeline to ingest the French CIQUAL food composition dataset into PostgreSQL. The result was a clean, validated relational database containing thousands of food and nutritional records.
 
-We will:
+However, a database alone is not enough. A static database is like a library without a librarian: the information exists, but users cannot easily ask natural-language questions such as *"What foods are rich in omega-3 but low in mercury?"* or *"Quels aliments contiennent beaucoup de protéines et peu de matières grasses ?"*
 
-- Generate multilingual embeddings for each food using a Sentence‑Transformer model.
-- Store embeddings as `vector(384)` columns and index them with IVFFlat for fast cosine similarity.
-- Build a FastAPI application that exposes two search endpoints (`GET` and `POST`).
-- Design the API to be **RAG‑ready** – the response includes full nutrient metadata as JSONB, ready to be fed into an LLM like Ollama or GPT.
+In this first installment, we'll transform that structured dataset into a semantic search engine by generating vector embeddings, storing them with pgvector, and exposing a search API with FastAPI. By the end, we'll have a RAG-ready retrieval layer capable of finding nutritionally relevant foods based on meaning rather than exact keyword matches; a critical building block for the intelligent food assistant we'll develop throughout the rest of this series.
 
 ---
 
@@ -56,13 +53,13 @@ Both approaches are valid, but they serve different needs. The following table s
 | Hybrid search (vector + keyword) | Built‑in                                                                            | Requires pg_trgm or tsvector combined with vector |
 | Ease of use                      | REST/gRPC API, client libraries                                                      | Ordinary SQL, any PostgreSQL driver               |
 
-For our CIQUAL dataset (~3,500 foods) [[3]], a dedicated vector database is overkill. `pgvector` integrates seamlessly into the existing ETL pipeline and keeps the stack lean.
+For our CIQUAL dataset (~3,500 foods) [[3][3]], a dedicated vector database is overkill. `pgvector` integrates seamlessly into the existing ETL pipeline and keeps the stack lean.
 
 ---
 
 ## Step 1: Enable `pgvector` in PostgreSQL
 
-If you used the Docker [[4]] command from [the previous ETL blog](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/) to run Postgres [[5]] container, you already have the `pgvector/pgvector` image [[6]]. If not, start the container with:
+If you used the Docker [[4][4]] command from [the previous ETL blog](https://tantikristanti.github.io/posts/2026/06/learning-to-embrace-imperfection-building-resilient-etl-pipelines-with-ciqual/) to run Postgres [[5][5]] container, you already have the `pgvector/pgvector` image [[6][6]]. If not, start the container with:
 
 ```bash
 docker run -d --name pgvector \
@@ -91,7 +88,7 @@ Now our PostgreSQL can store and search vectors.
 
 ## Step 2: Choose a Multilingual Embedding Model
 
-We need a model that understands both French and English, because CIQUAL provides names in both languages and users may ask in either. In this project, we will use **`paraphrase-multilingual-MiniLM-L12-v2`** from Sentence‑Transformers [[7]].
+We need a model that understands both French and English, because CIQUAL provides names in both languages and users may ask in either. In this project, we will use **`paraphrase-multilingual-MiniLM-L12-v2`** from Sentence‑Transformers [[7][7]].
 
 Why this model?
 
@@ -251,7 +248,7 @@ The operator `<=>` computes cosine distance. We transform it to similarity with 
 
 ## Step 7: FastAPI Wrapper – Expose the Search as a REST API
 
-To make the search engine usable by other applications (web frontend, mobile app, RAG pipeline), we wrap it in a FastAPI application [[8]]. The [`fastapi_app.py`](https://github.com/tantikristanti/Generative-AI-LLMs/blob/main/food-nutrition-semantic-search-rag/src/ciqual_etl/fastapi_app.py) module contains:
+To make the search engine usable by other applications (web frontend, mobile app, RAG pipeline), we wrap it in a FastAPI application [[8][8]]. The [`fastapi_app.py`](https://github.com/tantikristanti/Generative-AI-LLMs/blob/main/food-nutrition-semantic-search-rag/src/ciqual_etl/fastapi_app.py) module contains:
 
 ```python
 from fastapi import FastAPI, Query
@@ -298,7 +295,7 @@ async def search_get(query: str = Query(...), top_k: int = 5):
     return SearchResponse(query=query, top_k=top_k, results=results)
 ```
 
-The application starts with the `uvicorn` [[9]] command:
+The application starts with the `uvicorn` [[9][9]] command:
 
 ```bash
 uv run uvicorn ciqual_etl.fastapi_app:app --reload --port 8000
@@ -317,7 +314,7 @@ curl "http://localhost:8000/search?query=poisson%20gras%20om%C3%A9ga%203&top_k=3
 ```
 
 <figure id="fig1">
-  <img src="/images/posts/2026-06-16-persistent-semantic-search-building-a-rag-ready-food-engine-with-fastapi-and-pgvector/1-postman-query-get.png" alt="query-get" height="100%" weight="100%">
+  <img src="/images/posts/2026-06-16-part-1-persistent-semantic-search-with-fastapi-and-pgvector/1-postman-query-get.png" alt="query-get" height="100%" weight="100%">
   <figcaption>Figure 1: Search Endpoint (GET).</figcaption>
 </figure>
 
@@ -330,7 +327,7 @@ curl -X POST "http://localhost:8000/search" \
 ```
 
 <figure id="fig2">
-  <img src="/images/posts/2026-06-16-persistent-semantic-search-building-a-rag-ready-food-engine-with-fastapi-and-pgvector/2-postman-query-post.png" alt="query-post" height="100%" weight="100%">
+  <img src="/images/posts/2026-06-16-part-1-persistent-semantic-search-with-fastapi-and-pgvector/2-postman-query-post.png" alt="query-post" height="100%" weight="100%">
   <figcaption>Figure 2: Search Endpoint (POST).</figcaption>
 </figure>
 
@@ -356,7 +353,7 @@ Both return the following response:
 
 ## Performance and Scaling Considerations
 
-With 3,500 foods, the search latency is consistently below 100 ms on a modest laptop [[10]]. The IVFFlat index with `lists = 100` provides a good balance, recall is ~98% compared to exact brute‑force [[10], [11]].
+With 3,500 foods, the search latency is consistently below 100 ms on a modest laptop [[10][10]]. The IVFFlat index with `lists = 100` provides a good balance, recall is ~98% compared to exact brute‑force [[10][10], [11][11]].
 
 If your dataset grows to hundreds of thousands or millions of rows, consider:
 
@@ -371,31 +368,32 @@ For our use case, `pgvector` is more than enough.
 
 ## Conclusion
 
-We extended the resilient CIQUAL ETL pipeline with a persistent semantic search engine, all inside PostgreSQL, using the `pgvector` extension. By generating multilingual embeddings and storing them alongside the original metadata, we created a system that understands natural language queries in both French and English.
+In this first installment of our **Building a Production-Ready Food Nutrition Semantic Search and RAG System** series, we transformed the CIQUAL nutritional database from a static repository of food data into a multilingual semantic search engine.
 
-The FastAPI wrapper exposes a clean, documented REST API. The response includes full nutrient metadata (as JSONB), making the API immediately usable as the **retrieval component** of a RAG pipeline.
+Using PostgreSQL and the `pgvector` extension, we generated and stored vector embeddings alongside the original food metadata, enabling natural-language retrieval in both French and English. We then exposed this functionality through a FastAPI application, providing a clean and documented REST API that can retrieve nutritionally relevant foods based on meaning rather than exact keyword matches.
 
-### From Search to RAG
+More importantly, we've established the retrieval foundation that every RAG system depends on. The API not only returns the most relevant foods but also includes rich nutritional metadata, making it ready to serve as the knowledge retrieval layer for downstream AI applications.
 
-A RAG (Retrieval-Augmented Generation) system works in two stages:
+### Building Toward a Complete RAG System
 
-1. **Retrieve** – find relevant documents (our semantic search API).
-2. **Generate** – feed those documents to an LLM to produce an answer.
+At the beginning of this article, we compared a traditional database to a library without a librarian. With semantic search in place, we've effectively built the librarian: users can now search the food knowledge base using natural language and receive contextually relevant results.
 
-Our API already handles the retrieval. A downstream RAG orchestrator can:
+However, retrieval is only the first half of the journey.
 
-* Call our `/search` endpoint with the user's question.
-* Build a prompt that includes the question and the retrieved foods' names and nutrient values (from the `metadata` field).
-* Send the prompt to an LLM (e.g., Ollama, Llama 3, GPT‑4).
-* Return the LLM's answer.
+A complete Retrieval-Augmented Generation (RAG) system combines:
 
-Because the embeddings are multilingual, the same retriever works for French and English queries. The LLM can also answer in the user's language.
+1. **Retrieval** – finding the most relevant information from a knowledge base.
+2. **Generation** – using a large language model to transform that information into a natural-language answer.
+
+This article focused on the retrieval layer. In the next installment, we'll build the generation layer by integrating the search engine with Ollama and a local LLM, allowing users to ask complex nutrition questions and receive conversational, evidence-based answers grounded in the CIQUAL dataset.
+
+By the end of the series, we'll have progressed from raw nutritional data to a fully functional, production-ready food nutrition assistant powered by semantic search and RAG.
 
 ### 📦 GitHub Repository
 
-The complete, runnable code for the persistent semantic search engine, including the ETL pipeline, embedding generation, FastAPI server, and RAG endpoint, is available in the [Generative‑AI‑LLMs GitHub repository](https://github.com/tantikristanti/Generative-AI-LLMs/tree/main/food-nutrition-semantic-search-rag) under the `ciqual_etl` package.
+The complete, runnable code for the ETL pipeline, embedding generation, semantic search engine, FastAPI server, and supporting components is available in the GitHub repository under the `ciqual_etl` package.
 
-In the next post, we will integrate this search engine with Ollama to build a full RAG assistant that answers complex nutrition questions with natural language. 
+Repository: [https://github.com/tantikristanti/Generative-AI-LLMs/tree/main/food-nutrition-semantic-search-rag](https://github.com/tantikristanti/Generative-AI-LLMs/tree/main/food-nutrition-semantic-search-rag)
 
 ---
 
@@ -411,7 +409,7 @@ In the next post, we will integrate this search engine with Ollama to build a fu
 8. FastAPI. (2026).  **FastAPI framework** . [https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/).
 9. Uvicorn. (2026).  **Uvicorn ASGI server** . [https://uvicorn.dev/](https://uvicorn.dev/).
 10. Mark AI. (2026). **pgvector HNSW vs IVFFlat: Latency Benchmarks on 500K Vectors**. [https://markaicode.com/benchmarks/postgresql-pgvector-benchmark/](https://markaicode.com/benchmarks/postgresql-pgvector-benchmark/)
-11. Mastra AI. (2026). **Benchmarking pgvector RAG performance across different dataset sizes**. [https://mastra.ai/blog/pgvector-perf](https://mastra.ai/blog/pgvector-perf).
+11. Mastra AI. (2025). **Benchmarking pgvector RAG performance across different dataset sizes**. [https://mastra.ai/blog/pgvector-perf](https://mastra.ai/blog/pgvector-perf).
 
 ---
 
