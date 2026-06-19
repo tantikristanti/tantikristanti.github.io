@@ -298,7 +298,7 @@ The `RAGConfig` dataclass serves as a single source of truth for application set
 
 ## The Complete Execution Flow (Step-by-Step)
 
-To understand how the system works, let's follow a user query from submission to response generation:
+To understand the end-to-end execution flow, [Figure 1](#fig1) presents the sequence diagram of a RAG query execution flow. We will trace a user request as it moves through retrieval, prompt construction, LLM generation, and response assembly.
 
 1. **User Submits a Query**
    The process begins when a user executes:
@@ -324,6 +324,11 @@ rag.query("What are the nutritional values of salmon?")
    The `RAGSystem` combines the generated answer with the supporting retrieved documents and packages everything into a `RAGResponse` object.
 7. **The User Receives the Result**
    Finally, the completed response is returned to the user, along with the contextual information used to generate it.
+
+<figure id="fig1">
+  <img src="/images/posts/2026-06-19-part-2-designing-a-modular-food-rag-architecture-with-object-oriented-principles/rag-sequence-diagram.png" alt="Sequence Diagram: RAG Query Execution Flow" height="80%" weight="80%">
+  <figcaption>Figure 1: Sequence Diagram: RAG Query Execution Flow.</figcaption>
+</figure>
 
 ---
 
