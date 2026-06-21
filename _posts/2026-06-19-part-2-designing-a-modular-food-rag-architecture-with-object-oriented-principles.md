@@ -348,8 +348,9 @@ The key design principles behind this architecture are:
 
 At this stage, we have moved from a semantic search engine to a modular RAG foundation that is ready to be exposed through application interfaces and extended with additional capabilities.
 
-In **Part 3**, we'll build a production-ready FastAPI backend around this RAG system, adding features such as health checks, file uploads, and streaming responses. Then, in **Part 4**, we'll create an interactive user interface with Gradio, allowing non-technical users to query the system through a simple conversational interface.
+### What's Next?
 
+In **Part 3**, we'll build a production-ready FastAPI backend around this RAG system, adding features such as health checks, file uploads, and streaming responses. Then, in **Part 4**, we'll create an interactive user interface with Gradio, allowing non-technical users to query the system through a simple conversational interface.
 
 ### 📦 GitHub Repository
 
