@@ -719,7 +719,8 @@ The result is a deployable API that can be consumed by web frontends, mobile app
 
 ### What's Next?
 
-In **Part 4**, we'll build an  **interactive user interface with Gradio**, making the RAG system accessible to non‑technical users without requiring API calls. We'll create a chat‑style interface with image upload, streaming responses, and document display.
+In **Part 4**, we'll develop an **Agentic RAG** architecture where an autonomous agent dynamically selects and adjusts its search strategy to retrieve the most relevant information.
+
 
 ### 📦 GitHub Repository
 
