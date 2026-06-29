@@ -389,6 +389,21 @@ This article focused on the retrieval layer. In the next installment, we'll buil
 
 By the end of the series, we'll have progressed from raw nutritional data to a fully functional, production-ready food nutrition assistant powered by semantic search and RAG.
 
+---
+
+### What's Next?
+
+*This post is part of the series **Building a Production-Ready Food Nutrition Semantic Search and RAG System**.*
+
+* ***[Part 1: Persistent Semantic Search with FastAPI and pgvector](https://tantikristanti.github.io/posts/2026/06/part-1-persistent-semantic-search-with-fastapi-and-pgvector/)** (this post)*
+* *Part 2: Designing a Modular Food RAG Architecture with Object-Oriented Principles*
+* *Part 3: Exposing the RAG System with a FastAPI Backend*
+* *Part 4: From Fixed Pipeline to Intelligent Multi-Agent RAG*
+
+In **Part 2**, we'll design a modular food nutrition RAG architecture with Object-Oriented Principles.
+
+---
+
 ### 📦 GitHub Repository
 
 The complete, runnable code for the ETL pipeline, embedding generation, semantic search engine, FastAPI server, and supporting components is available in the GitHub repository under the `ciqual_etl` package.

@@ -47,14 +47,14 @@ This post walks through the complete RAG implementation, explaining each compone
 
 Before diving into the code, let's consider why OOP matters for RAG systems. The following table compares a monolithic approach with our modular OOP design:
 
-| Aspect                        | Monolithic Script                           | OOP Modular Design                                 |
-| ----------------------------- | ------------------------------------------- | -------------------------------------------------- |
-| **Retriever swap**      | Rewrite database queries throughout         | Implement a new class inheriting `BaseRetriever` |
-| **LLM provider change** | Modify HTTP calls in multiple places        | Swap the `llm_client` instance                   |
-| **Prompt changes**      | Edit string formatting inside the main loop | Modify only the `PromptBuilder` class            |
-| **Testing**             | Requires full system setup                  | Mock individual components                         |
-| **Code readability**    | Hard to follow                              | Clear separation of concerns                       |
-| **Extensibility**       | High risk of breaking existing features     | Add new components without touching others         |
+| Aspect                        | Monolithic Script                           | OOP Modular Design                                |
+| ----------------------------- | ------------------------------------------- | ------------------------------------------------- |
+| **Retriever swap**      | Rewrite database queries throughout         | Implement a new class inheriting`BaseRetriever` |
+| **LLM provider change** | Modify HTTP calls in multiple places        | Swap the`llm_client` instance                   |
+| **Prompt changes**      | Edit string formatting inside the main loop | Modify only the`PromptBuilder` class            |
+| **Testing**             | Requires full system setup                  | Mock individual components                        |
+| **Code readability**    | Hard to follow                              | Clear separation of concerns                      |
+| **Extensibility**       | High risk of breaking existing features     | Add new components without touching others        |
 
 ---
 
@@ -348,9 +348,20 @@ The key design principles behind this architecture are:
 
 At this stage, we have moved from a semantic search engine to a modular RAG foundation that is ready to be exposed through application interfaces and extended with additional capabilities.
 
+---
+
 ### What's Next?
 
-In **Part 3**, we'll build a production-ready FastAPI backend around this RAG system, adding features such as health checks, file uploads, and streaming responses. Then, in **Part 4**, we'll create an interactive user interface with Gradio, allowing non-technical users to query the system through a simple conversational interface.
+*This post is part of the series **Building a Production-Ready Food Nutrition Semantic Search and RAG System**.*
+
+* *[Part 1: Persistent Semantic Search with FastAPI and pgvector](https://tantikristanti.github.io/posts/2026/06/part-1-persistent-semantic-search-with-fastapi-and-pgvector/)*
+* ***[Part 2: Designing a Modular Food RAG Architecture with Object-Oriented Principles](https://tantikristanti.github.io/posts/2026/06/part-2-designing-a-modular-food-rag-architecture-with-object-oriented-principles/)** (this post)*
+* *Part 3: Exposing the RAG System with a FastAPI Backend*
+* *Part 4: From Fixed Pipeline to Intelligent Multi-Agent RAG*
+
+In **Part 3**, we'll build a production-ready FastAPI backend around this RAG system, adding features such as health checks, file uploads, and streaming responses. 
+
+---
 
 ### 📦 GitHub Repository
 

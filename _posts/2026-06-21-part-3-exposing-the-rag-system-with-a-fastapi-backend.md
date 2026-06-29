@@ -719,8 +719,18 @@ The result is a deployable API that can be consumed by web frontends, mobile app
 
 ### What's Next?
 
+---
+
+*This post is part of the series **Building a Production-Ready Food Nutrition Semantic Search and RAG System**.*
+
+* *[Part 1: Persistent Semantic Search with FastAPI and pgvector](https://tantikristanti.github.io/posts/2026/06/part-1-persistent-semantic-search-with-fastapi-and-pgvector/)*
+* *[Part 2: Designing a Modular Food RAG Architecture with Object-Oriented Principles](https://tantikristanti.github.io/posts/2026/06/part-2-designing-a-modular-food-rag-architecture-with-object-oriented-principles/)*
+* ***[Part 3: Exposing the RAG System with a FastAPI Backend](https://tantikristanti.github.io/posts/2026/06/part-3-exposing-the-rag-system-with-a-fastapi-backend/)** (this post)*
+* *Part 4: From Fixed Pipeline to Intelligent Multi-Agent RAG*
+
 In **Part 4**, we'll develop an **Agentic RAG** architecture where an autonomous agent dynamically selects and adjusts its search strategy to retrieve the most relevant information.
 
+---
 
 ### 📦 GitHub Repository
 
