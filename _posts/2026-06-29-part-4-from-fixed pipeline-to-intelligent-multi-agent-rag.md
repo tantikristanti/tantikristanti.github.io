@@ -92,7 +92,7 @@ This comparison clarifies the key trade‑off: we accept higher latency and comp
 Instead of relying on a single monolithic agent, we design a **multi‑agent architecture** with clearly defined responsibilities. The following diagram illustrates how the **Orchestrator Agent** manages the workflow by coordinating three specialised agents, each operating as an independent component at the same hierarchical level.
 
 <figure id="fig1">
-  <img src="/images/posts/2026-06-29-part-4-from-fixed-pipeline-to-intelligent-multi-agent-rag/1-agentic-rag-flowchart.png" alt="agentic-rag-flowchart" height="100%" weight="100%">
+  <img src="/images/posts/2026-06-29-part-4-from-fixed-pipeline-to-intelligent-multi-agent-rag/1-agentic-rag-flowchart.png" alt="agentic-rag-flowchart" height="80%" weight="80%">
   <figcaption>Figure 1: Multi-Agent Architecture showing the Orchestrator Agent coordinating three specialised agents (Query Refiner, Search Agent, and Response Agent).</figcaption>
 </figure>
 
@@ -401,13 +401,13 @@ In the next installment, we'll explore how to deploy this agentic RAG system wit
 
 ## References
 
-1. ANSES. (2025).  **Ciqual French food composition table** . [https://ciqual.anses.fr/](https://ciqual.anses.fr/)
-2. DataTalksClub. (2026).  **LLM Zoomcamp: Agentic RAG Module** . [https://github.com/DataTalksClub/llm-zoomcamp](https://github.com/DataTalksClub/llm-zoomcamp)
-3. OpenAI. (2024).  **Function Calling Documentation** . [https://platform.openai.com/docs/guides/function-calling](https://platform.openai.com/docs/guides/function-calling)
-4. Weng, L. (2023).  **LLM Powered Autonomous Agents** . [https://lilianweng.github.io/posts/2023-06-23-agent/](https://lilianweng.github.io/posts/2023-06-23-agent/)
-5. LangChain. (2025).  **Agents Documentation** . [https://python.langchain.com/docs/modules/agents/](https://python.langchain.com/docs/modules/agents/)
-6. Ollama. (2025).  **Ollama Documentation** . [https://ollama.com/](https://ollama.com/)
-7. FastAPI. (2026).  **FastAPI Framework** . [https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/)
+1. ANSES. (2025). **Ciqual French food composition table**. [https://ciqual.anses.fr/](https://ciqual.anses.fr/)
+2. DataTalksClub. (2026). **LLM Zoomcamp: Agentic RAG Module**. [https://github.com/DataTalksClub/llm-zoomcamp](https://github.com/DataTalksClub/llm-zoomcamp)
+3. OpenAI. (2024). **Function Calling Documentation**. [https://platform.openai.com/docs/guides/function-calling](https://platform.openai.com/docs/guides/function-calling)
+4. Weng, L. (2023). **LLM Powered Autonomous Agents**. [https://lilianweng.github.io/posts/2023-06-23-agent/](https://lilianweng.github.io/posts/2023-06-23-agent/)
+5. LangChain. (2025). **Agents Documentation**. [https://python.langchain.com/docs/modules/agents/](https://python.langchain.com/docs/modules/agents/)
+6. Ollama. (2025). **Ollama Documentation**. [https://ollama.com/](https://ollama.com/)
+7. FastAPI. (2026). **FastAPI Framework**. [https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/)
 
 ---
 
