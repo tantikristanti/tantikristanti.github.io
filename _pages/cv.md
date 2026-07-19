@@ -71,7 +71,7 @@ redirect_from:
 
 ### Programming
 
-- Python, Java, C, C#
+- Python, Java, R, C, C#
 
 ---
 
