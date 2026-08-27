@@ -108,17 +108,17 @@ redirect_from:
 
 ---
 
-### Machine Learning & Deep Learning
+### Machine Learning & Deep Learning Platform
 
-- PyTorch, TensorFlow, Keras, Hugging Face
+- Google Cloud Vertex AI, Amazon Bedrock, Amazon SageMaker, PyTorch, TensorFlow, Keras, Hugging Face
 
 ---
 
 ### AI / LLM Ecosystem
 
-**Large Language Models (LLMs)**
+**Large Language Models (LLMs) and Multimodal Models**
 
-- LLaMA, Mistral, DeepSeek, Qwen, GPT, BERT
+- Gemini Family, Amazon (Nova, Titan), OpenAI, LLaMA, Mistral, DeepSeek, Qwen, BERT
 
 **Embeddings**
 
@@ -163,7 +163,7 @@ redirect_from:
 
 ### Cloud Platforms
 
-- AWS, Azure, GCP
+- AWS, GCP, Azure
 
 ---
 
@@ -220,6 +220,8 @@ redirect_from:
 <ul>{% for post in site.certifications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
+
+ - Google Skill badges: https://www.skills.google/public_profiles/88287e35-3a48-49c7-9de7-26904b9d87ec
 
 ---
 
