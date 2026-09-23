@@ -221,7 +221,9 @@ redirect_from:
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
 
- - Google Cloud Skill and Completion Badges: [link](https://www.skills.google/public_profiles/88287e35-3a48-49c7-9de7-26904b9d87ec)
+ - Google Cloud Skill Badges: [link](https://www.skills.google/public_profiles/88287e35-3a48-49c7-9de7-26904b9d87ec)
+
+ - Credly badges: [link](https://www.credly.com/users/tanti-kristanti/badges/credly)
 
 ---
 
