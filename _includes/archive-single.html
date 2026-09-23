@@ -48,6 +48,7 @@
       {% elsif post.date %}
         <p> {{ post.type }}, <i>{{ post.venue }}</i>, {{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}  </p>
       {% endif %}
+
     {% elsif post.collection == 'certifications' %}
       {% if post.date1 and post.date2 %}
         <p> Description,  Training Organization, (Validity Start Date  – Validity End Date)</p>
@@ -55,12 +56,22 @@
       {% elsif post.date %}
         <p> {{ post.type }}, <i>{{ post.venue }}</i>, {{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}  </p>
       {% endif %}
+
+      {% if post.image %}
+        <a href="{{ post.image | relative_url }}" target="_blank">
+          <img src="{{ post.image | relative_url }}"
+              alt="{{ post.title }} - {{ post.type }}"
+              style="max-width: 600px; height: auto;">
+        </a>
+      {% endif %}
+      
     {% elsif post.collection == 'training' %}
       {% if post.date1 and post.date2 %}
         <p> {{ post.type }}, <i>{{ post.venue }}</i>, {{ post.date1 | default: "1900-01-01" | date: "%Y" }}  - {{ post.date2 | default: "1900-01-01" | date: "%Y" }} </p>
       {% elsif post.date %}
         <p> {{ post.type }}, <i>{{ post.venue }}</i>, {{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}  </p>
       {% endif %}
+
     {% elsif post.collection == 'posts' and post.date %}
       <p class="page__date"><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time datetime="{{ post.date | default: "1900-01-01" | date_to_xmlschema }}">{{ post.date | default: "1900-01-01" | date: "%B %d, %Y" }}</time></p>
     {% elsif post.date %}
